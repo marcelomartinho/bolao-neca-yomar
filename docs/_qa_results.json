@@ -1,0 +1,478 @@
+{
+  "rls_status": [
+    {
+      "tablename": "groups",
+      "rowsecurity": true
+    },
+    {
+      "tablename": "matches",
+      "rowsecurity": true
+    },
+    {
+      "tablename": "picks",
+      "rowsecurity": true
+    },
+    {
+      "tablename": "profiles",
+      "rowsecurity": true
+    },
+    {
+      "tablename": "teams",
+      "rowsecurity": true
+    }
+  ],
+  "policies": [
+    {
+      "policyname": "groups: leitura p\u00fablica",
+      "tablename": "groups",
+      "cmd": "SELECT",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "policyname": "matches: leitura p\u00fablica",
+      "tablename": "matches",
+      "cmd": "SELECT",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "policyname": "matches: update apenas host",
+      "tablename": "matches",
+      "cmd": "UPDATE",
+      "qual": "(EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = ( SELECT auth.uid() AS uid)) AND (profiles.host = true))))",
+      "with_check": "(EXISTS ( SELECT 1\n   FROM profiles\n  WHERE ((profiles.id = ( SELECT auth.uid() AS uid)) AND (profiles.host = true))))"
+    },
+    {
+      "policyname": "picks: insert apenas dono com jogo aberto",
+      "tablename": "picks",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "((user_id = ( SELECT auth.uid() AS uid)) AND (EXISTS ( SELECT 1\n   FROM matches\n  WHERE ((matches.id = picks.match_id) AND (matches.starts_at > now())))))"
+    },
+    {
+      "policyname": "picks: select dono ou ap\u00f3s apito (anti-cola)",
+      "tablename": "picks",
+      "cmd": "SELECT",
+      "qual": "((user_id = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n   FROM matches\n  WHERE ((matches.id = picks.match_id) AND (matches.starts_at < now())))))",
+      "with_check": null
+    },
+    {
+      "policyname": "picks: update apenas dono com jogo aberto",
+      "tablename": "picks",
+      "cmd": "UPDATE",
+      "qual": "((user_id = ( SELECT auth.uid() AS uid)) AND (EXISTS ( SELECT 1\n   FROM matches\n  WHERE ((matches.id = picks.match_id) AND (matches.starts_at > now())))))",
+      "with_check": "((user_id = ( SELECT auth.uid() AS uid)) AND (EXISTS ( SELECT 1\n   FROM matches\n  WHERE ((matches.id = picks.match_id) AND (matches.starts_at > now())))))"
+    },
+    {
+      "policyname": "profiles: insert apenas pr\u00f3prio",
+      "tablename": "profiles",
+      "cmd": "INSERT",
+      "qual": null,
+      "with_check": "(id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "policyname": "profiles: leitura p\u00fablica",
+      "tablename": "profiles",
+      "cmd": "SELECT",
+      "qual": "true",
+      "with_check": null
+    },
+    {
+      "policyname": "profiles: update apenas dono",
+      "tablename": "profiles",
+      "cmd": "UPDATE",
+      "qual": "(id = ( SELECT auth.uid() AS uid))",
+      "with_check": "(id = ( SELECT auth.uid() AS uid))"
+    },
+    {
+      "policyname": "teams: leitura p\u00fablica",
+      "tablename": "teams",
+      "cmd": "SELECT",
+      "qual": "true",
+      "with_check": null
+    }
+  ],
+  "indexes": [
+    {
+      "indexname": "groups_pkey",
+      "tablename": "groups",
+      "indexdef": "CREATE UNIQUE INDEX groups_pkey ON public.groups USING btree (letter)"
+    },
+    {
+      "indexname": "idx_matches_group",
+      "tablename": "matches",
+      "indexdef": "CREATE INDEX idx_matches_group ON public.matches USING btree (group_letter)"
+    },
+    {
+      "indexname": "idx_matches_starts_at",
+      "tablename": "matches",
+      "indexdef": "CREATE INDEX idx_matches_starts_at ON public.matches USING btree (starts_at)"
+    },
+    {
+      "indexname": "matches_pkey",
+      "tablename": "matches",
+      "indexdef": "CREATE UNIQUE INDEX matches_pkey ON public.matches USING btree (id)"
+    },
+    {
+      "indexname": "idx_picks_match_id",
+      "tablename": "picks",
+      "indexdef": "CREATE INDEX idx_picks_match_id ON public.picks USING btree (match_id)"
+    },
+    {
+      "indexname": "idx_picks_user_id",
+      "tablename": "picks",
+      "indexdef": "CREATE INDEX idx_picks_user_id ON public.picks USING btree (user_id)"
+    },
+    {
+      "indexname": "picks_pkey",
+      "tablename": "picks",
+      "indexdef": "CREATE UNIQUE INDEX picks_pkey ON public.picks USING btree (user_id, match_id)"
+    },
+    {
+      "indexname": "profiles_pkey",
+      "tablename": "profiles",
+      "indexdef": "CREATE UNIQUE INDEX profiles_pkey ON public.profiles USING btree (id)"
+    },
+    {
+      "indexname": "teams_pkey",
+      "tablename": "teams",
+      "indexdef": "CREATE UNIQUE INDEX teams_pkey ON public.teams USING btree (code)"
+    }
+  ],
+  "row_counts": [
+    {
+      "tbl": "teams",
+      "cnt": "48"
+    },
+    {
+      "tbl": "groups",
+      "cnt": "12"
+    },
+    {
+      "tbl": "matches",
+      "cnt": "72"
+    },
+    {
+      "tbl": "profiles",
+      "cnt": "1"
+    },
+    {
+      "tbl": "picks",
+      "cnt": "0"
+    }
+  ],
+  "triggers": [
+    {
+      "trigger_name": "picks_updated_at",
+      "event_object_table": "picks",
+      "action_statement": "EXECUTE FUNCTION set_updated_at()"
+    }
+  ],
+  "handle_new_user": [],
+  "ranking_empty": [
+    {
+      "ranking_rows": 1
+    }
+  ],
+  "ranking_sample": [
+    {
+      "id": "eb75d1d1-8120-4c3b-8669-ea8be8673c04",
+      "name": "mmartinho.br",
+      "initials": "MM",
+      "emoji": null,
+      "host": false,
+      "score": 0,
+      "resolved": 0,
+      "total_picks": 0
+    }
+  ],
+  "explain_matches": [
+    {
+      "QUERY PLAN": "Limit  (cost=0.14..1.36 rows=20 width=44)"
+    },
+    {
+      "QUERY PLAN": "  ->  Index Scan using idx_matches_starts_at on matches  (cost=0.14..4.52 rows=72 width=44)"
+    }
+  ],
+  "foreign_keys": [
+    {
+      "table_name": "matches",
+      "column_name": "group_letter",
+      "foreign_table": "groups",
+      "foreign_column": "letter"
+    },
+    {
+      "table_name": "matches",
+      "column_name": "team_a",
+      "foreign_table": "teams",
+      "foreign_column": "code"
+    },
+    {
+      "table_name": "matches",
+      "column_name": "team_b",
+      "foreign_table": "teams",
+      "foreign_column": "code"
+    },
+    {
+      "table_name": "picks",
+      "column_name": "user_id",
+      "foreign_table": "profiles",
+      "foreign_column": "id"
+    },
+    {
+      "table_name": "picks",
+      "column_name": "match_id",
+      "foreign_table": "matches",
+      "foreign_column": "id"
+    }
+  ],
+  "views": [
+    {
+      "table_name": "ranking",
+      "view_definition": " SELECT p.id,\n    p.name,\n    p.initials,\n    p.emoji,\n    p.host,\n    count(*) FILTER (WHERE (pk.pick = m.result)) AS score,\n    count(*) FILTER (WHERE (m.result IS NOT NULL)) AS resolved,\n    count(pk.match_id) AS total_picks\n   FROM ((profiles p\n     LEFT JOIN picks pk ON ((pk.user_id = p.id)))\n     LEFT JOIN matches m ON ((m.id = pk.match_id)))\n  GROUP BY p.id, p.name, p.initials, p.emoji, p.host\n  ORDER BY (count(*) FILTER (WHERE (pk.pick = m.result))) DESC NULLS LAST;"
+    }
+  ],
+  "pg_stat_user_tables": [
+    {
+      "relname": "audit_log_entries",
+      "seq_scan": 0,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "buckets",
+      "seq_scan": 8,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "buckets_analytics",
+      "seq_scan": 4,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "buckets_vectors",
+      "seq_scan": 1,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "custom_oauth_providers",
+      "seq_scan": 6,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "flow_state",
+      "seq_scan": 5,
+      "idx_scan": 6,
+      "n_live_tup": 1
+    },
+    {
+      "relname": "groups",
+      "seq_scan": 5,
+      "idx_scan": 86,
+      "n_live_tup": 12
+    },
+    {
+      "relname": "identities",
+      "seq_scan": 11,
+      "idx_scan": 20,
+      "n_live_tup": 1
+    },
+    {
+      "relname": "instances",
+      "seq_scan": 0,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "matches",
+      "seq_scan": 20,
+      "idx_scan": 73,
+      "n_live_tup": 72
+    },
+    {
+      "relname": "messages",
+      "seq_scan": 0,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "mfa_amr_claims",
+      "seq_scan": 3,
+      "idx_scan": 7,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "mfa_challenges",
+      "seq_scan": 2,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "mfa_factors",
+      "seq_scan": 7,
+      "idx_scan": 12,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "migrations",
+      "seq_scan": 2,
+      "idx_scan": 0,
+      "n_live_tup": 61
+    },
+    {
+      "relname": "oauth_authorizations",
+      "seq_scan": 7,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "oauth_client_states",
+      "seq_scan": 2,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "oauth_clients",
+      "seq_scan": 7,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "oauth_consents",
+      "seq_scan": 5,
+      "idx_scan": 2,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "objects",
+      "seq_scan": 10,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "one_time_tokens",
+      "seq_scan": 4,
+      "idx_scan": 10,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "picks",
+      "seq_scan": 13,
+      "idx_scan": 4,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "profiles",
+      "seq_scan": 14,
+      "idx_scan": 10,
+      "n_live_tup": 1
+    },
+    {
+      "relname": "refresh_tokens",
+      "seq_scan": 6,
+      "idx_scan": 1,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "s3_multipart_uploads",
+      "seq_scan": 5,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "s3_multipart_uploads_parts",
+      "seq_scan": 3,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "saml_providers",
+      "seq_scan": 3,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "saml_relay_states",
+      "seq_scan": 6,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "schema_migrations",
+      "seq_scan": 1,
+      "idx_scan": 69,
+      "n_live_tup": 76
+    },
+    {
+      "relname": "schema_migrations",
+      "seq_scan": 71,
+      "idx_scan": 0,
+      "n_live_tup": 69
+    },
+    {
+      "relname": "secrets",
+      "seq_scan": 0,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "sessions",
+      "seq_scan": 7,
+      "idx_scan": 10,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "sso_domains",
+      "seq_scan": 3,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "sso_providers",
+      "seq_scan": 3,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "subscription",
+      "seq_scan": 13,
+      "idx_scan": 44,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "teams",
+      "seq_scan": 6,
+      "idx_scan": 193,
+      "n_live_tup": 48
+    },
+    {
+      "relname": "users",
+      "seq_scan": 29,
+      "idx_scan": 50,
+      "n_live_tup": 1
+    },
+    {
+      "relname": "vector_indexes",
+      "seq_scan": 2,
+      "idx_scan": 0,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "webauthn_challenges",
+      "seq_scan": 3,
+      "idx_scan": 2,
+      "n_live_tup": 0
+    },
+    {
+      "relname": "webauthn_credentials",
+      "seq_scan": 3,
+      "idx_scan": 2,
+      "n_live_tup": 0
+    }
+  ]
+}

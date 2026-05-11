@@ -9,6 +9,9 @@ export type SavePickResult =
   | { ok: false; error: string };
 
 export async function savePick(matchId: number, pick: Pick): Promise<SavePickResult> {
+  if (!Number.isInteger(matchId) || matchId < 1 || matchId > 72) {
+    return { ok: false, error: "Jogo inválido" };
+  }
   if (!["1", "X", "2"].includes(pick)) {
     return { ok: false, error: "Palpite inválido" };
   }

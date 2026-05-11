@@ -1,0 +1,12 @@
+OK: rls_status -> 5 rows
+OK: policies -> 10 rows
+OK: indexes -> 9 rows
+OK: row_counts -> 5 rows
+OK: triggers -> 1 rows
+OK: handle_new_user -> 0 rows
+OK: ranking_empty -> 1 rows
+OK: ranking_sample -> 1 rows
+OK: explain_matches -> 2 rows
+OK: foreign_keys -> 5 rows
+OK: views -> 1 rows
+OK: pg_stat_user_tables -> 40 rows

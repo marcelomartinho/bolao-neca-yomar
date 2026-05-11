@@ -48,3 +48,4 @@ _design/
 
 # tool output
 /tasks/
+docs/_qa_*.py
