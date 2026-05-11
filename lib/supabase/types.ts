@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_config: {
+        Row: {
+          created_at: string
+          id: number
+          picks_deadline: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id: number
+          picks_deadline?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          picks_deadline?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       groups: {
         Row: {
           letter: string
@@ -132,30 +153,54 @@ export type Database = {
       }
       profiles: {
         Row: {
+          auth_user_id: string | null
+          birthdate: string | null
           created_at: string
           emoji: string | null
           host: boolean
           id: string
           initials: string | null
           name: string
+          parent_id: string | null
         }
         Insert: {
+          auth_user_id?: string | null
+          birthdate?: string | null
           created_at?: string
           emoji?: string | null
           host?: boolean
           id: string
           initials?: string | null
           name: string
+          parent_id?: string | null
         }
         Update: {
+          auth_user_id?: string | null
+          birthdate?: string | null
           created_at?: string
           emoji?: string | null
           host?: boolean
           id?: string
           initials?: string | null
           name?: string
+          parent_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "ranking"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       teams: {
         Row: {
@@ -192,7 +237,10 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      is_profile_managed_by_uid: {
+        Args: { profile_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

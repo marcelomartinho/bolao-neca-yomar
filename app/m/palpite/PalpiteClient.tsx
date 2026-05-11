@@ -1,12 +1,17 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { TriRule } from "@/components/boletim/TriRule";
 import { BBrand } from "@/components/boletim/BBrand";
 import { Flag } from "@/components/Flag";
+import { Avatar } from "@/components/Avatar";
 import { Icon } from "@/components/Icon";
+import { DeadlineBanner } from "@/components/DeadlineBanner";
 import type { Pick } from "@/lib/supabase/types";
 import type { MatchRow } from "@/lib/db";
+import type { ManagedProfile } from "@/lib/active-profile";
 import { TEAMS } from "@/lib/static-data";
 import { savePick } from "./actions";
 
@@ -20,9 +25,36 @@ type Props = {
   matches: MatchRow[];
   initialPicks: Record<number, Pick>;
   email: string;
+  deadlineIso?: string | null;
+  open?: boolean;
+  profiles?: ManagedProfile[];
+  activeProfileId?: string;
 };
 
-export function PalpiteClient({ matches, initialPicks, email }: Props) {
+export function PalpiteClient({
+  matches,
+  initialPicks,
+  email,
+  deadlineIso,
+  open = true,
+  profiles = [],
+  activeProfileId,
+}: Props) {
+  const router = useRouter();
+  const [switching, setSwitching] = useState(false);
+  const activeProfile = profiles.find((p) => p.id === activeProfileId);
+
+  async function switchActive(id: string) {
+    if (id === activeProfileId) return;
+    setSwitching(true);
+    await fetch("/api/active-profile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ profile_id: id }),
+    });
+    router.refresh();
+  }
+
   const [picks, setPicks] = useState<Record<number, Pick>>(initialPicks);
   const [savingMatchId, setSavingMatchId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -31,6 +63,10 @@ export function PalpiteClient({ matches, initialPicks, email }: Props) {
   const filled = matches.filter((m) => picks[m.id]).length;
 
   function setPick(matchId: number, value: Pick) {
+    if (!open) {
+      setError("Palpites encerrados.");
+      return;
+    }
     const prev = picks[matchId];
     setPicks({ ...picks, [matchId]: value });
     setSavingMatchId(matchId);
@@ -65,6 +101,44 @@ export function PalpiteClient({ matches, initialPicks, email }: Props) {
         <span className="tag">Cartela</span>
       </div>
       <TriRule height={2} />
+      <DeadlineBanner deadlineIso={deadlineIso ?? null} />
+
+      {profiles.length > 1 && (
+        <div className="flex flex-wrap items-center gap-2 border-b border-line bg-paper2/40 px-4 py-2">
+          <span className="tag">Palpitando como</span>
+          {profiles.map((p) => {
+            const sel = p.id === activeProfileId;
+            return (
+              <button
+                key={p.id}
+                onClick={() => switchActive(p.id)}
+                disabled={switching}
+                className="font-cond inline-flex items-center gap-1.5 rounded-sm border-[1.5px] px-2.5 py-1 text-xs font-bold uppercase tracking-wider"
+                style={{
+                  borderColor: sel ? "#0b6b3a" : "#d5dde7",
+                  background: sel ? "#0b6b3a" : "transparent",
+                  color: sel ? "#fbfaf4" : "#0b2c5c",
+                }}
+              >
+                <Avatar
+                  name={p.name}
+                  initials={p.initials}
+                  emoji={p.emoji}
+                  size={20}
+                />
+                {p.name}
+                {p.is_kid && <span className="text-[10px] opacity-75">🧒</span>}
+              </button>
+            );
+          })}
+          <Link
+            href="/m/familia"
+            className="font-mono ml-auto text-[10px] uppercase tracking-[0.18em] text-ink2 underline-offset-4 hover:underline"
+          >
+            Gerenciar família →
+          </Link>
+        </div>
+      )}
 
       <div className="border-b border-line px-5 py-3.5">
         <div className="flex items-baseline justify-between">

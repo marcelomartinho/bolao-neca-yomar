@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter_Tight, Barlow_Condensed, Geist_Mono } from "next/font/google";
+import { NavBar } from "@/components/NavBar";
 import "./globals.css";
 
 const interTight = Inter_Tight({
@@ -59,7 +60,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       lang="pt-BR"
       className={`${interTight.variable} ${barlowCondensed.variable} ${geistMono.variable}`}
     >
-      <body className="paper-bg min-h-screen font-sans text-ink antialiased">{children}</body>
+      <body className="paper-bg min-h-screen font-sans text-ink antialiased">
+        <NavBar />
+        <div className="pb-16 md:pb-0">{children}</div>
+      </body>
     </html>
   );
 }

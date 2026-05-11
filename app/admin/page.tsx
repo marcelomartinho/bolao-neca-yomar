@@ -1,10 +1,12 @@
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { fetchMatches } from "@/lib/db";
+import { fetchAppConfig } from "@/lib/config";
 import { TriRule } from "@/components/boletim/TriRule";
 import { PageHeader } from "@/components/boletim/PageHeader";
 import { PageFooter } from "@/components/boletim/PageFooter";
 import { AdminClient } from "./AdminClient";
+import { DeadlineEditor } from "./DeadlineEditor";
 
 export const dynamic = "force-dynamic";
 
@@ -39,12 +41,15 @@ export default async function AdminPage() {
     );
   }
 
-  const matches = await fetchMatches();
+  const [matches, config] = await Promise.all([fetchMatches(), fetchAppConfig()]);
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
       <TriRule height={3} />
-      <PageHeader pageLabel="Pág. 7 — Administração" subtitle="Marcar resultados" />
+      <PageHeader pageLabel="Pág. 7 — Administração" subtitle="Configuração & resultados" />
+      <div className="border-b border-line px-9 py-5">
+        <DeadlineEditor initialDeadline={config.picks_deadline} />
+      </div>
       <AdminClient matches={matches} orgName={profile.name} />
       <PageFooter
         left="Pág. 7 de 7"

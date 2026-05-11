@@ -3,12 +3,18 @@ import { TriRule } from "@/components/boletim/TriRule";
 import { Stamp } from "@/components/boletim/Stamp";
 import { Avatar } from "@/components/Avatar";
 import { Icon } from "@/components/Icon";
+import { DeadlineBanner } from "@/components/DeadlineBanner";
 import { PARTICIPANTS } from "@/lib/static-data";
+import { fetchAppConfig } from "@/lib/config";
 
-export default function FrontPage() {
+export const revalidate = 60;
+
+export default async function FrontPage() {
+  const config = await fetchAppConfig();
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
       <TriRule height={4} />
+      <DeadlineBanner deadlineIso={config.picks_deadline} />
 
       {/* Masthead */}
       <div className="flex items-end justify-between border-b-2 border-ink px-9 pb-3.5 pt-5">
