@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { TriRule } from "@/components/boletim/TriRule";
@@ -42,17 +42,44 @@ export function PalpiteClient({
 }: Props) {
   const router = useRouter();
   const [switching, setSwitching] = useState(false);
-  const activeProfile = profiles.find((p) => p.id === activeProfileId);
+  // Optimistic active id for the toolbar highlight during the round-trip
+  const [optimisticActiveId, setOptimisticActiveId] = useState(activeProfileId);
+
+  // Reset local pick state whenever the server gives us new picks for the
+  // active profile (após switch + router.refresh).
+  useEffect(() => {
+    setPicks(initialPicks);
+    setSavingMatchId(null);
+    setError(null);
+    setOptimisticActiveId(activeProfileId);
+    setSwitching(false);
+    // initialPicks identity changes per render; key by activeProfileId only
+    // so we don't thrash. eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeProfileId]);
 
   async function switchActive(id: string) {
-    if (id === activeProfileId) return;
+    if (id === optimisticActiveId) return;
+    setOptimisticActiveId(id);
     setSwitching(true);
-    await fetch("/api/active-profile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ profile_id: id }),
-    });
-    router.refresh();
+    try {
+      const res = await fetch("/api/active-profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profile_id: id }),
+      });
+      if (!res.ok) {
+        setSwitching(false);
+        setOptimisticActiveId(activeProfileId);
+        setError("Não foi possível trocar de perfil.");
+        return;
+      }
+      router.refresh();
+    } catch {
+      setSwitching(false);
+      setOptimisticActiveId(activeProfileId);
+      setError("Falha de rede ao trocar de perfil.");
+    }
   }
 
   const [picks, setPicks] = useState<Record<number, Pick>>(initialPicks);
@@ -67,6 +94,7 @@ export function PalpiteClient({
       setError("Palpites encerrados.");
       return;
     }
+    if (switching) return;
     const prev = picks[matchId];
     setPicks({ ...picks, [matchId]: value });
     setSavingMatchId(matchId);
@@ -107,7 +135,7 @@ export function PalpiteClient({
         <div className="flex flex-wrap items-center gap-2 border-b border-line bg-paper2/40 px-4 py-2">
           <span className="tag">Palpitando como</span>
           {profiles.map((p) => {
-            const sel = p.id === activeProfileId;
+            const sel = p.id === optimisticActiveId;
             return (
               <button
                 key={p.id}
