@@ -1,0 +1,63 @@
+/* ============================================================
+   Bolão Neca & Yomar — Copa 2026 design tokens
+   Portado de _design/.../tokens.css.
+   Bradesco Sans substituído por Inter Tight (Google Fonts) —
+   ver docs/ARCHITECTURE.md §5 e ADR-002.
+   ============================================================ */
+
+:root {
+  /* Fonts (CSS vars povoadas via next/font/google em app/layout.tsx) */
+  --font-sans: var(--font-inter-tight, "Inter Tight"), ui-sans-serif, system-ui, -apple-system,
+    sans-serif;
+  --font-cond: var(--font-inter-tight, "Inter Tight"), var(--font-sans);
+  --font-mono: var(--font-geist-mono, "Geist Mono"), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Neutral palette */
+  --bg: oklch(1 0 0);
+  --bg-1: oklch(0.985 0 0);
+  --bg-2: oklch(0.97 0 0);
+  --fg: oklch(0.145 0 0);
+  --fg-2: oklch(0.556 0 0);
+  --fg-3: oklch(0.708 0 0);
+  --line-neutral: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+
+  /* Boletim — Variação 3 */
+  --paper: #fbfaf4;
+  --paper-2: #f4f1e6;
+  --ink: #0b2c5c;
+  --ink-2: #5a6a86;
+  --line: #d5dde7;
+
+  /* Brasil */
+  --green: #0b6b3a;
+  --green-soft: #e5efe8;
+  --gold: #c79410;
+  --gold-soft: #f6ecc7;
+  --blue: #0b2c5c;
+  --blue-soft: #e8edf5;
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.08);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+}
+
+/* Variação 3 — fundo papel com risca sutil */
+.paper-bg {
+  background:
+    radial-gradient(ellipse at 20% 0%, #f6f1d8, #fbfaf4 55%),
+    repeating-linear-gradient(0deg, transparent 0 30px, oklch(0 0 0 / 0.02) 30px 31px);
+}
+
+/* Tag mono (uppercase pequena) */
+.tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}

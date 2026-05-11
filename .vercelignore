@@ -1,0 +1,5 @@
+_design/
+docs/
+supabase/
+*.md
+!README.md
