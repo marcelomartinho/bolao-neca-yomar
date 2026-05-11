@@ -268,7 +268,7 @@ export function PalpiteClient({
                         <div className="px-3 pb-3 pt-3.5">
                           <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2.5">
                             <div className="flex flex-col items-end gap-1">
-                              <Flag colors={teamA.colors} size="lg" />
+                              <Flag code={m.team_a as keyof typeof TEAMS} name={teamA.name} size="lg" />
                               <span
                                 className="font-cond text-right text-sm font-bold uppercase leading-none tracking-[0.02em]"
                                 style={{ color: pick === "1" ? gColor : "#0b2c5c" }}
@@ -280,7 +280,7 @@ export function PalpiteClient({
                               vs
                             </span>
                             <div className="flex flex-col items-start gap-1">
-                              <Flag colors={teamB.colors} size="lg" />
+                              <Flag code={m.team_b as keyof typeof TEAMS} name={teamB.name} size="lg" />
                               <span
                                 className="font-cond text-sm font-bold uppercase leading-none tracking-[0.02em]"
                                 style={{ color: pick === "2" ? gColor : "#0b2c5c" }}
@@ -292,9 +292,9 @@ export function PalpiteClient({
 
                           <div className="mt-3 grid grid-cols-3 gap-1.5">
                             {([
-                              { v: "1" as Pick, label: teamA.name },
-                              { v: "X" as Pick, label: "Empate" },
-                              { v: "2" as Pick, label: teamB.name },
+                              { v: "1" as Pick, label: teamA.name, big: teamA.name },
+                              { v: "X" as Pick, label: "Empate", big: "X" },
+                              { v: "2" as Pick, label: teamB.name, big: teamB.name },
                             ]).map((opt) => {
                               const isSel = pick === opt.v;
                               return (
@@ -302,18 +302,15 @@ export function PalpiteClient({
                                   key={opt.v}
                                   onClick={() => setPick(m.id, opt.v)}
                                   disabled={isSaving}
-                                  className="flex flex-col items-center gap-0.5 rounded-sm border-[1.5px] py-1.5 disabled:cursor-not-allowed"
+                                  className="flex flex-col items-center justify-center gap-0.5 rounded-sm border-[1.5px] px-1.5 py-2 disabled:cursor-not-allowed"
                                   style={{
                                     borderColor: isSel ? gColor : "#0b2c5c",
                                     background: isSel ? gColor : "transparent",
                                     color: isSel ? "#fff" : "#0b2c5c",
                                   }}
                                 >
-                                  <span className="font-cond text-lg font-extrabold leading-none">
-                                    {opt.v}
-                                  </span>
-                                  <span className="font-mono text-[8.5px] uppercase leading-none tracking-[0.12em] opacity-90">
-                                    {opt.label}
+                                  <span className="font-cond text-center text-[13px] font-extrabold uppercase leading-tight tracking-[0.02em]">
+                                    {opt.big}
                                   </span>
                                 </button>
                               );

@@ -72,12 +72,12 @@ export default async function JogoPage({ params }: Props) {
 
         <div className="mt-7 flex items-center justify-between gap-6">
           <div className="flex flex-col items-center gap-2">
-            <Flag colors={tA.colors} size="xl" />
+            <Flag code={tA.code} name={tA.name} size="xl" />
             <span className="font-cond text-lg font-bold uppercase">{tA.name}</span>
           </div>
           <span className="font-cond text-3xl italic font-normal text-ink2">vs</span>
           <div className="flex flex-col items-center gap-2">
-            <Flag colors={tB.colors} size="xl" />
+            <Flag code={tB.code} name={tB.name} size="xl" />
             <span className="font-cond text-lg font-bold uppercase">{tB.name}</span>
           </div>
         </div>

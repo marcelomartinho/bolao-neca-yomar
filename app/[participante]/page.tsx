@@ -123,7 +123,7 @@ export default async function PerfilPage({ params }: Props) {
                   >
                     <div className="flex items-center justify-end gap-2 text-[12.5px]">
                       <span style={{ fontWeight: p.pick === "1" ? 700 : 500 }}>{tA.name}</span>
-                      <Flag colors={tA.colors} />
+                      <Flag code={tA.code} name={tA.name} />
                     </div>
                     <div
                       className="font-cond mx-auto flex h-[26px] w-[26px] items-center justify-center border-[1.5px] text-[13px] font-extrabold"
@@ -142,7 +142,7 @@ export default async function PerfilPage({ params }: Props) {
                       {p.pick}
                     </div>
                     <div className="flex items-center gap-2 text-[12.5px]">
-                      <Flag colors={tB.colors} />
+                      <Flag code={tB.code} name={tB.name} />
                       <span style={{ fontWeight: p.pick === "2" ? 700 : 500 }}>{tB.name}</span>
                     </div>
                     <span className="text-right font-mono text-[10px] text-ink2">

@@ -101,7 +101,7 @@ export function AdminClient({ matches, orgName }: Props) {
               <span className="font-cond text-base font-bold">{m.group_letter}</span>
               <div className="flex items-center justify-end gap-2 text-[13px]">
                 <span style={{ fontWeight: result === "1" ? 700 : 500 }}>{tA.name}</span>
-                <Flag colors={tA.colors} />
+                <Flag code={tA.code} name={tA.name} />
               </div>
               <div className="flex justify-center gap-1">
                 {(["1", "X", "2"] as const).map((v) => {
@@ -124,7 +124,7 @@ export function AdminClient({ matches, orgName }: Props) {
                 })}
               </div>
               <div className="flex items-center gap-2 text-[13px]">
-                <Flag colors={tB.colors} />
+                <Flag code={tB.code} name={tB.name} />
                 <span style={{ fontWeight: result === "2" ? 700 : 500 }}>{tB.name}</span>
               </div>
               <span className="text-right font-mono text-[11px] text-ink2">

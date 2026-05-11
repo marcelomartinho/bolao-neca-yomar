@@ -68,14 +68,11 @@ export default function GruposPage() {
                         color: isBR ? "#0b6b3a" : "#0b2c5c",
                       }}
                     >
-                      <Flag colors={t.colors} />
+                      <Flag code={code} name={t.name} />
                       <span className="font-cond flex-1 uppercase tracking-[0.01em]">
                         {t.name}
                       </span>
-                      <span className="font-mono text-[10px] text-ink2">
-                        {["A", "B", "C", "D"][i]}
-                        {g.letter}
-                      </span>
+                      <span className="font-mono text-[10px] text-ink2">{i + 1}º</span>
                     </div>
                   );
                 })}

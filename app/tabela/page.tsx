@@ -75,7 +75,7 @@ export default function TabelaPage() {
                     key={m.id}
                     className="grid items-center gap-2 px-7 py-1.5"
                     style={{
-                      gridTemplateColumns: "48px 50px 1.2fr 60px 1.2fr 88px",
+                      gridTemplateColumns: "48px 50px 1.4fr 32px 1.4fr 88px",
                       borderBottom: i === list.length - 1 ? "none" : "1px dashed #d5dde7",
                     }}
                   >
@@ -87,20 +87,11 @@ export default function TabelaPage() {
                     </span>
                     <div className="flex items-center justify-end gap-2">
                       <span className="font-cond text-sm font-semibold">{TEAMS[m.a].name}</span>
-                      <Flag colors={TEAMS[m.a].colors} />
+                      <Flag code={m.a} name={TEAMS[m.a].name} />
                     </div>
-                    <div className="flex justify-center gap-0.5">
-                      {(["1", "X", "2"] as const).map((v) => (
-                        <span
-                          key={v}
-                          className="font-cond flex h-[18px] w-[18px] items-center justify-center border border-line text-[10px] font-bold text-ink2"
-                        >
-                          {v}
-                        </span>
-                      ))}
-                    </div>
+                    <span className="font-cond text-center text-base italic text-ink2">vs</span>
                     <div className="flex items-center gap-2">
-                      <Flag colors={TEAMS[m.b].colors} />
+                      <Flag code={m.b} name={TEAMS[m.b].name} />
                       <span className="font-cond text-sm font-semibold">{TEAMS[m.b].name}</span>
                     </div>
                     <span className="text-right font-mono text-[10px] text-ink2">

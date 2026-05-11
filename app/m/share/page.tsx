@@ -91,7 +91,7 @@ export default async function SharePage() {
                   >
                     <div className="flex items-center justify-end gap-1.5 text-[12.5px]">
                       <span style={{ fontWeight: pick === "1" ? 700 : 500 }}>{tA.name}</span>
-                      <Flag colors={tA.colors} />
+                      <Flag code={tA.code} name={tA.name} />
                     </div>
                     <div
                       className="font-cond mx-auto flex h-[26px] w-[26px] items-center justify-center border-[1.5px] border-ink text-[13px] font-extrabold"
@@ -103,7 +103,7 @@ export default async function SharePage() {
                       {pick ?? "?"}
                     </div>
                     <div className="flex items-center gap-1.5 text-[12.5px]">
-                      <Flag colors={tB.colors} />
+                      <Flag code={tB.code} name={tB.name} />
                       <span style={{ fontWeight: pick === "2" ? 700 : 500 }}>{tB.name}</span>
                     </div>
                   </div>

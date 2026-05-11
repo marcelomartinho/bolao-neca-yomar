@@ -13,8 +13,29 @@ export type TeamCode =
 export type Team = {
   code: TeamCode;
   name: string;
-  colors: [string, string, string];
+  iso2: string; // ISO 3166-1 alpha-2 (or gb-eng for England) usado pelo flagcdn.com
+  colors: [string, string, string]; // fallback ainda em uso em /dev
 };
+
+const ISO2: Record<TeamCode, string> = {
+  MEX: "mx", USA: "us", CAN: "ca", BRA: "br",
+  ARG: "ar", FRA: "fr", ESP: "es", ENG: "gb-eng",
+  GER: "de", POR: "pt", ITA: "it", BEL: "be",
+  NED: "nl", CRO: "hr", SUI: "ch", DEN: "dk",
+  POL: "pl", SRB: "rs", AUT: "at", NOR: "no",
+  TUR: "tr", URU: "uy", COL: "co", ECU: "ec",
+  PAR: "py", JPN: "jp", KOR: "kr", AUS: "au",
+  IRN: "ir", JOR: "jo", UZB: "uz", KSA: "sa",
+  QAT: "qa", MAR: "ma", TUN: "tn", SEN: "sn",
+  EGY: "eg", ALG: "dz", NGA: "ng", GHA: "gh",
+  CMR: "cm", CIV: "ci", RSA: "za", CPV: "cv",
+  CRC: "cr", JAM: "jm", PAN: "pa", NZL: "nz",
+};
+
+export function flagUrl(code: TeamCode, width: 20 | 40 | 80 | 160 = 40): string {
+  const c = ISO2[code];
+  return `https://flagcdn.com/w${width}/${c}.png`;
+}
 
 export type GroupLetter =
   | "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L";
@@ -80,7 +101,7 @@ const NAMES: Record<TeamCode, string> = {
 export const TEAMS: Record<TeamCode, Team> = Object.fromEntries(
   (Object.keys(NAMES) as TeamCode[]).map((code) => [
     code,
-    { code, name: NAMES[code], colors: COLORS[code] },
+    { code, name: NAMES[code], iso2: ISO2[code], colors: COLORS[code] },
   ]),
 ) as Record<TeamCode, Team>;
 
