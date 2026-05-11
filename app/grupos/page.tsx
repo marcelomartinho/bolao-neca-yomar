@@ -1,9 +1,12 @@
+import type { Metadata } from "next";
 import { TriRule } from "@/components/boletim/TriRule";
 import { Stamp } from "@/components/boletim/Stamp";
 import { PageHeader } from "@/components/boletim/PageHeader";
 import { PageFooter } from "@/components/boletim/PageFooter";
 import { Flag } from "@/components/Flag";
 import { GROUPS, TEAMS } from "@/lib/static-data";
+
+export const metadata: Metadata = { title: "Os doze grupos" };
 
 export default function GruposPage() {
   return (

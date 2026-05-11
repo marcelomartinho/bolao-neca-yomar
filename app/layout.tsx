@@ -14,10 +14,35 @@ const geistMono = Geist_Mono({
   display: "swap",
 });
 
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://bolao-neca-yomar.vercel.app";
+
 export const metadata: Metadata = {
-  title: "Bolão Neca & Yomar — Copa 2026",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Bolão Neca & Yomar — Copa 2026",
+    template: "%s · Bolão Neca & Yomar",
+  },
   description:
-    "Boletim do bolão familiar da Copa do Mundo 2026. 48 seleções, 72 jogos, palpite 1 / X / 2.",
+    "Boletim do bolão familiar da Copa do Mundo 2026. 48 seleções, 12 grupos, 72 jogos, palpite 1 / X / 2.",
+  applicationName: "Bolão Neca & Yomar",
+  authors: [{ name: "Neca & Yomar" }],
+  keywords: ["bolão", "copa do mundo 2026", "fifa", "família", "palpite"],
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    url: SITE_URL,
+    siteName: "Bolão Neca & Yomar",
+    title: "Bolão Neca & Yomar — Copa 2026",
+    description:
+      "Boletim do bolão familiar da Copa do Mundo 2026. Vem palpitar com a gente.",
+  },
+  twitter: {
+    card: "summary",
+    title: "Bolão Neca & Yomar — Copa 2026",
+    description: "Boletim do bolão familiar da Copa do Mundo 2026.",
+  },
+  robots: { index: true, follow: true },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

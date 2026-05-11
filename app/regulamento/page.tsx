@@ -1,7 +1,10 @@
+import type { Metadata } from "next";
 import { TriRule } from "@/components/boletim/TriRule";
 import { Stamp } from "@/components/boletim/Stamp";
 import { PageHeader } from "@/components/boletim/PageHeader";
 import { PageFooter } from "@/components/boletim/PageFooter";
+
+export const metadata: Metadata = { title: "Regulamento" };
 
 const REGRAS: Array<[string, string]> = [
   ["O bolão", "Aposta sobre os 72 jogos da fase de grupos da Copa de 2026. Cada jogo vale 1 ponto."],

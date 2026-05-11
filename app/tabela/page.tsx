@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { TriRule } from "@/components/boletim/TriRule";
 import { PageHeader } from "@/components/boletim/PageHeader";
 import { PageFooter } from "@/components/boletim/PageFooter";
@@ -11,6 +12,7 @@ import {
 } from "@/lib/static-data";
 
 export const revalidate = 300;
+export const metadata: Metadata = { title: "Tabela completa" };
 
 export default function TabelaPage() {
   const byDay = new Map<string, typeof MATCHES>();

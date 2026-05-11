@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { TriRule } from "@/components/boletim/TriRule";
 import { Stamp } from "@/components/boletim/Stamp";
@@ -9,6 +10,7 @@ import { fetchRanking, fetchMatches } from "@/lib/db";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
+export const metadata: Metadata = { title: "Ranking" };
 
 export default async function RankingPage() {
   const [ranking, matches] = await Promise.all([fetchRanking(), fetchMatches()]);
