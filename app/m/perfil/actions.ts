@@ -24,7 +24,10 @@ export async function updateProfile(formData: FormData) {
     .update({ name, initials, emoji })
     .eq("id", user.id);
 
-  if (error) redirect(`/m/perfil?error=${encodeURIComponent(error.message)}`);
+  if (error) {
+    console.error("updateProfile failed", error);
+    redirect("/m/perfil?error=nao-foi-possivel-salvar");
+  }
 
   revalidatePath("/ranking");
   revalidatePath(`/${user.id}`);

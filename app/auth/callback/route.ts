@@ -1,16 +1,29 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-const ALLOWED_PATHS = new Set(["/", "/m/palpite", "/ranking", "/grupos", "/tabela", "/regulamento"]);
+const ALLOWED_PATHS = new Set([
+  "/",
+  "/m/palpite",
+  "/m/perfil",
+  "/m/share",
+  "/ranking",
+  "/grupos",
+  "/tabela",
+  "/regulamento",
+  "/admin",
+]);
+const ALLOWED_PREFIXES = ["/m/jogo/"];
 
 function safePath(raw: string | null): string {
   const fallback = "/m/palpite";
   if (!raw) return fallback;
   // must start with single "/" (rejects "//evil.com" and "http://...")
   if (!raw.startsWith("/") || raw.startsWith("//")) return fallback;
-  // strip query/hash for membership check; allow paths in allowlist
+  // strip query/hash for membership check
   const path = raw.split(/[?#]/)[0];
-  return ALLOWED_PATHS.has(path) ? raw : fallback;
+  if (ALLOWED_PATHS.has(path)) return raw;
+  if (ALLOWED_PREFIXES.some((p) => path.startsWith(p))) return raw;
+  return fallback;
 }
 
 export async function GET(request: NextRequest) {

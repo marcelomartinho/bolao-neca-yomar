@@ -22,11 +22,19 @@ export async function setMatchResult(
   } = await supabase.auth.getUser();
   if (!user) return { ok: false, error: "Sem sessão" };
 
+  // Defense in depth: check host=true at application layer before relying on RLS.
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("host")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (!profile?.host) return { ok: false, error: "Acesso restrito" };
+
   const { error } = await supabase
     .from("matches")
     .update({ result })
     .eq("id", matchId);
-  if (error) return { ok: false, error: error.message };
+  if (error) return { ok: false, error: "Não foi possível salvar o resultado" };
 
   revalidatePath("/ranking");
   revalidatePath("/tabela");
