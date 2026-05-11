@@ -178,121 +178,174 @@ export function PalpiteClient({
         </div>
       )}
 
-      <div className="flex flex-1 flex-col gap-3 overflow-auto px-4 py-3.5">
+      <div className="flex-1 overflow-auto px-4 py-3.5">
         {matches.length === 0 && (
           <div className="border-2 border-dashed border-line bg-white/40 p-5 text-center text-sm text-ink2">
             Sem jogos abertos no momento. A Copa começa em junho de 2026.
           </div>
         )}
-        {matches.map((m) => {
-          const pick = picks[m.id];
-          const gColor = GROUP_COLORS[m.group_letter] ?? "#0b2c5c";
-          const teamA = TEAMS[m.team_a as keyof typeof TEAMS];
-          const teamB = TEAMS[m.team_b as keyof typeof TEAMS];
-          const isSaving = savingMatchId === m.id;
-          const date = new Date(m.starts_at);
-          const time = date.toLocaleTimeString("pt-BR", {
-            timeZone: "America/Sao_Paulo",
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-          const day = date.toLocaleDateString("pt-BR", {
-            timeZone: "America/Sao_Paulo",
-            day: "2-digit",
-            month: "short",
-          });
-          return (
-            <div
-              key={m.id}
-              className="relative border-[1.5px] border-ink bg-white/65"
-              style={{ opacity: isSaving ? 0.7 : 1 }}
-            >
-              <div className="flex items-stretch border-b-[1.5px] border-ink bg-paper2">
-                <div className="flex min-w-[64px] flex-col items-start justify-center bg-ink px-3 py-1.5 text-paper">
-                  <span className="font-mono text-[8.5px] uppercase tracking-[0.22em] opacity-70">
-                    Jogo
-                  </span>
-                  <span className="font-cond text-[24px] font-extrabold leading-[1.05] tracking-[0.02em]">
-                    Nº {String(m.id).padStart(2, "0")}
-                  </span>
-                </div>
-                <div
-                  className="flex flex-col items-start justify-center px-3 py-1.5 text-white"
-                  style={{ background: gColor }}
-                >
-                  <span className="font-mono text-[8.5px] uppercase tracking-[0.22em] opacity-80">
-                    Grupo
-                  </span>
-                  <span className="font-cond text-[24px] font-extrabold leading-[1.05]">
-                    {m.group_letter}
-                  </span>
-                </div>
-                <div className="flex flex-1 flex-col items-end justify-center gap-px px-3">
-                  <span className="font-mono text-[9px] uppercase tracking-[0.18em] leading-none text-ink2">
-                    {day} · Rodada {m.round}
-                  </span>
-                  <span className="font-cond text-[15px] font-bold tracking-[0.02em] text-ink">
-                    {time} BRT
-                  </span>
-                </div>
-              </div>
 
-              <div className="px-3 pb-3 pt-3.5">
-                <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2.5">
-                  <div className="flex flex-col items-end gap-1">
-                    <Flag colors={teamA.colors} size="lg" />
+        {(() => {
+          // Group by group_letter (A..L), within each group sort by starts_at
+          const byGroup = new Map<string, MatchRow[]>();
+          for (const m of matches) {
+            const arr = byGroup.get(m.group_letter) ?? [];
+            arr.push(m);
+            byGroup.set(m.group_letter, arr);
+          }
+          const groupLetters = [...byGroup.keys()].sort();
+          for (const g of groupLetters) {
+            byGroup
+              .get(g)!
+              .sort((a, b) => new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime());
+          }
+
+          return groupLetters.map((g) => {
+            const groupMatches = byGroup.get(g)!;
+            const gColor = GROUP_COLORS[g] ?? "#0b2c5c";
+            const groupFilled = groupMatches.filter((m) => picks[m.id]).length;
+            return (
+              <section key={g} className="mb-6 last:mb-2">
+                <header className="mb-2 flex items-baseline justify-between border-b border-line pb-1">
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-ink2">
+                      Grupo
+                    </span>
                     <span
-                      className="font-cond text-right text-sm font-bold uppercase leading-none tracking-[0.02em]"
-                      style={{ color: pick === "1" ? gColor : "#0b2c5c" }}
+                      className="font-cond text-2xl font-extrabold leading-none"
+                      style={{ color: gColor }}
                     >
-                      {teamA.name}
+                      {g}
                     </span>
                   </div>
-                  <span className="font-cond text-base italic font-normal text-ink2">vs</span>
-                  <div className="flex flex-col items-start gap-1">
-                    <Flag colors={teamB.colors} size="lg" />
-                    <span
-                      className="font-cond text-sm font-bold uppercase leading-none tracking-[0.02em]"
-                      style={{ color: pick === "2" ? gColor : "#0b2c5c" }}
-                    >
-                      {teamB.name}
-                    </span>
-                  </div>
-                </div>
+                  <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink2">
+                    {groupFilled}/{groupMatches.length} palpitados
+                  </span>
+                </header>
 
-                <div className="mt-3 grid grid-cols-3 gap-1.5">
-                  {([
-                    { v: "1" as Pick, label: teamA.name },
-                    { v: "X" as Pick, label: "Empate" },
-                    { v: "2" as Pick, label: teamB.name },
-                  ]).map((opt) => {
-                    const isSel = pick === opt.v;
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                  {groupMatches.map((m) => {
+                    const pick = picks[m.id];
+                    const teamA = TEAMS[m.team_a as keyof typeof TEAMS];
+                    const teamB = TEAMS[m.team_b as keyof typeof TEAMS];
+                    const isSaving = savingMatchId === m.id;
+                    const date = new Date(m.starts_at);
+                    const time = date.toLocaleTimeString("pt-BR", {
+                      timeZone: "America/Sao_Paulo",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    });
+                    const day = date.toLocaleDateString("pt-BR", {
+                      timeZone: "America/Sao_Paulo",
+                      day: "2-digit",
+                      month: "short",
+                    });
                     return (
-                      <button
-                        key={opt.v}
-                        onClick={() => setPick(m.id, opt.v)}
-                        disabled={isSaving}
-                        className="flex flex-col items-center gap-0.5 rounded-sm border-[1.5px] py-1.5 disabled:cursor-not-allowed"
-                        style={{
-                          borderColor: isSel ? gColor : "#0b2c5c",
-                          background: isSel ? gColor : "transparent",
-                          color: isSel ? "#fff" : "#0b2c5c",
-                        }}
+                      <div
+                        key={m.id}
+                        className="relative border-[1.5px] border-ink bg-white/65"
+                        style={{ opacity: isSaving ? 0.7 : 1 }}
                       >
-                        <span className="font-cond text-lg font-extrabold leading-none">
-                          {opt.v}
-                        </span>
-                        <span className="font-mono text-[8.5px] uppercase leading-none tracking-[0.12em] opacity-90">
-                          {opt.label}
-                        </span>
-                      </button>
+                        <div className="flex items-stretch border-b-[1.5px] border-ink bg-paper2">
+                          <div className="flex min-w-[60px] flex-col items-start justify-center bg-ink px-2.5 py-1.5 text-paper">
+                            <span className="font-mono text-[8.5px] uppercase tracking-[0.22em] opacity-70">
+                              Jogo
+                            </span>
+                            <span className="font-cond text-[20px] font-extrabold leading-[1.05] tracking-[0.02em]">
+                              Nº {String(m.id).padStart(2, "0")}
+                            </span>
+                          </div>
+                          <div className="flex flex-1 flex-col items-end justify-center gap-px px-3">
+                            <span className="font-mono text-[9px] uppercase tracking-[0.18em] leading-none text-ink2">
+                              {day} · Rodada {m.round}
+                            </span>
+                            <span className="font-cond text-[15px] font-bold tracking-[0.02em] text-ink">
+                              {time} BRT
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="px-3 pb-3 pt-3.5">
+                          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2.5">
+                            <div className="flex flex-col items-end gap-1">
+                              <Flag colors={teamA.colors} size="lg" />
+                              <span
+                                className="font-cond text-right text-sm font-bold uppercase leading-none tracking-[0.02em]"
+                                style={{ color: pick === "1" ? gColor : "#0b2c5c" }}
+                              >
+                                {teamA.name}
+                              </span>
+                            </div>
+                            <span className="font-cond text-base italic font-normal text-ink2">
+                              vs
+                            </span>
+                            <div className="flex flex-col items-start gap-1">
+                              <Flag colors={teamB.colors} size="lg" />
+                              <span
+                                className="font-cond text-sm font-bold uppercase leading-none tracking-[0.02em]"
+                                style={{ color: pick === "2" ? gColor : "#0b2c5c" }}
+                              >
+                                {teamB.name}
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="mt-3 grid grid-cols-3 gap-1.5">
+                            {([
+                              { v: "1" as Pick, label: teamA.name },
+                              { v: "X" as Pick, label: "Empate" },
+                              { v: "2" as Pick, label: teamB.name },
+                            ]).map((opt) => {
+                              const isSel = pick === opt.v;
+                              return (
+                                <button
+                                  key={opt.v}
+                                  onClick={() => setPick(m.id, opt.v)}
+                                  disabled={isSaving}
+                                  className="flex flex-col items-center gap-0.5 rounded-sm border-[1.5px] py-1.5 disabled:cursor-not-allowed"
+                                  style={{
+                                    borderColor: isSel ? gColor : "#0b2c5c",
+                                    background: isSel ? gColor : "transparent",
+                                    color: isSel ? "#fff" : "#0b2c5c",
+                                  }}
+                                >
+                                  <span className="font-cond text-lg font-extrabold leading-none">
+                                    {opt.v}
+                                  </span>
+                                  <span className="font-mono text-[8.5px] uppercase leading-none tracking-[0.12em] opacity-90">
+                                    {opt.label}
+                                  </span>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
                     );
                   })}
                 </div>
-              </div>
-            </div>
-          );
-        })}
+              </section>
+            );
+          });
+        })()}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2 border-t border-line bg-paper2/40 px-5 py-2">
+        <span className="tag mr-1">Exportar</span>
+        <a
+          href="/m/cartela/pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-cond inline-flex items-center gap-1.5 rounded-sm border-2 border-ink bg-transparent px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-ink"
+        >
+          <Icon.Download s={12} /> PDF
+        </a>
+        <a
+          href="/m/cartela/csv"
+          className="font-cond inline-flex items-center gap-1.5 rounded-sm border-2 border-ink bg-transparent px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-ink"
+        >
+          <Icon.Download s={12} /> Excel (CSV)
+        </a>
       </div>
 
       <div className="flex items-center gap-2.5 border-t-2 border-ink bg-white/60 px-5 py-3">

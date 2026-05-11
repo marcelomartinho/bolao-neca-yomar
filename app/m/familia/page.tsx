@@ -58,7 +58,7 @@ export default async function FamiliaPage() {
                 </span>
               </div>
               <Link
-                href="/m/perfil"
+                href={{ pathname: "/m/perfil", query: { profile_id: self.id } }}
                 className="font-cond text-xs font-bold uppercase tracking-wider text-ink underline-offset-4 hover:underline"
               >
                 Editar
@@ -100,6 +100,12 @@ export default async function FamiliaPage() {
                       criança · gerenciado por você
                     </span>
                   </div>
+                  <Link
+                    href={{ pathname: "/m/perfil", query: { profile_id: k.id } }}
+                    className="font-cond text-xs font-bold uppercase tracking-wider text-ink underline-offset-4 hover:underline"
+                  >
+                    Editar
+                  </Link>
                   <form action={removeKid}>
                     <input type="hidden" name="kid_id" value={k.id} />
                     <button
