@@ -12,7 +12,7 @@ export default async function PalpitePage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/m/login");
 
-  const matches = await fetchOpenMatches(12);
+  const matches = await fetchOpenMatches(72);
   const picksMap = await fetchMyPicks(matches.map((m) => m.id));
   const initialPicks: Record<number, "1" | "X" | "2"> = {};
   picksMap.forEach((v, k) => (initialPicks[k] = v));
