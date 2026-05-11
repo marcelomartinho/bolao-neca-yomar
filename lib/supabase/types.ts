@@ -57,6 +57,8 @@ export type Database = {
           id: number
           result: string | null
           round: number
+          score_a: number | null
+          score_b: number | null
           starts_at: string
           team_a: string
           team_b: string
@@ -67,6 +69,8 @@ export type Database = {
           id: number
           result?: string | null
           round: number
+          score_a?: number | null
+          score_b?: number | null
           starts_at: string
           team_a: string
           team_b: string
@@ -77,6 +81,8 @@ export type Database = {
           id?: number
           result?: string | null
           round?: number
+          score_a?: number | null
+          score_b?: number | null
           starts_at?: string
           team_a?: string
           team_b?: string
@@ -375,5 +381,5 @@ export const Constants = {
 } as const
 
 
-// Local extension: tighten pick result enum
+// Local extension
 export type Pick = "1" | "X" | "2";

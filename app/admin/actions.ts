@@ -7,6 +7,12 @@ import type { Pick } from "@/lib/supabase/types";
 export type ActionResult = { ok: true } | { ok: false; error: string };
 export type SetResultResult = ActionResult;
 
+function resultFromScore(a: number, b: number): Pick {
+  if (a > b) return "1";
+  if (a < b) return "2";
+  return "X";
+}
+
 async function requireHost() {
   const supabase = await createSupabaseServerClient();
   const {
@@ -57,14 +63,58 @@ export async function setMatchResult(
   const guard = await requireHost();
   if (!guard.ok) return { ok: false, error: guard.error };
 
+  // Quando vier null, limpa também os scores
+  const update =
+    result === null
+      ? { result: null, score_a: null, score_b: null }
+      : { result };
   const { error } = await guard.supabase
     .from("matches")
-    .update({ result })
+    .update(update)
     .eq("id", matchId);
   if (error) return { ok: false, error: "Não foi possível salvar o resultado" };
 
   revalidatePath("/ranking");
   revalidatePath("/tabela");
   revalidatePath("/admin");
+  return { ok: true };
+}
+
+export async function setMatchScore(
+  matchId: number,
+  scoreA: number | null,
+  scoreB: number | null,
+): Promise<SetResultResult> {
+  if (!Number.isInteger(matchId) || matchId < 1 || matchId > 72) {
+    return { ok: false, error: "Jogo inválido" };
+  }
+  const bothNull = scoreA === null && scoreB === null;
+  const bothSet = Number.isInteger(scoreA) && Number.isInteger(scoreB);
+  if (!bothNull && !bothSet) {
+    return { ok: false, error: "Preencha os dois placares ou deixe vazio" };
+  }
+  if (bothSet) {
+    if (scoreA! < 0 || scoreA! > 30 || scoreB! < 0 || scoreB! > 30) {
+      return { ok: false, error: "Placar fora do intervalo (0–30)" };
+    }
+  }
+  const guard = await requireHost();
+  if (!guard.ok) return { ok: false, error: guard.error };
+
+  const update = bothNull
+    ? { score_a: null, score_b: null, result: null }
+    : {
+        score_a: scoreA,
+        score_b: scoreB,
+        result: resultFromScore(scoreA!, scoreB!),
+      };
+
+  const { error } = await guard.supabase.from("matches").update(update).eq("id", matchId);
+  if (error) return { ok: false, error: "Não foi possível salvar o placar" };
+
+  revalidatePath("/ranking");
+  revalidatePath("/tabela");
+  revalidatePath("/admin");
+  revalidatePath(`/m/jogo/${matchId}`);
   return { ok: true };
 }

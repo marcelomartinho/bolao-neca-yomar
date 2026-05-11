@@ -25,7 +25,7 @@ export default async function JogoPage({ params }: Props) {
 
   const { data: match } = await supabase
     .from("matches")
-    .select("id,group_letter,round,team_a,team_b,starts_at,city,result")
+    .select("id,group_letter,round,team_a,team_b,starts_at,city,result,score_a,score_b")
     .eq("id", matchId)
     .maybeSingle();
   if (!match) notFound();
@@ -84,9 +84,22 @@ export default async function JogoPage({ params }: Props) {
 
         {match.result ? (
           <div className="mt-7 border-2 border-grass bg-grassSoft p-4 text-center">
-            <div className="tag">Resultado oficial</div>
-            <div className="font-cond mt-1 text-4xl font-extrabold uppercase text-grass">
-              {match.result === "1" ? tA.name : match.result === "2" ? tB.name : "Empate"}
+            <div className="tag">Resultado oficial · 90 min</div>
+            {match.score_a != null && match.score_b != null && (
+              <div className="font-cond mt-2 flex items-center justify-center gap-3 text-2xl font-extrabold uppercase">
+                <span className="text-ink">{tA.name}</span>
+                <span className="rounded-sm bg-grass px-3 py-1 text-paper">
+                  {match.score_a} x {match.score_b}
+                </span>
+                <span className="text-ink">{tB.name}</span>
+              </div>
+            )}
+            <div className="font-cond mt-2 text-base font-bold uppercase text-grass">
+              {match.result === "1"
+                ? `Vence ${tA.name}`
+                : match.result === "2"
+                  ? `Vence ${tB.name}`
+                  : "Empate"}
             </div>
           </div>
         ) : closed ? (
