@@ -89,6 +89,29 @@ export function PalpiteClient({
 
   const filled = matches.filter((m) => picks[m.id]).length;
 
+  function Spinner({ big = false }: { big?: boolean }) {
+    const s = big ? 18 : 12;
+    return (
+      <svg
+        width={s}
+        height={s}
+        viewBox="0 0 24 24"
+        fill="none"
+        aria-hidden
+        style={{ animation: "spin 0.7s linear infinite" }}
+      >
+        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeOpacity="0.25" strokeWidth="3" />
+        <path
+          d="M21 12a9 9 0 0 1-9 9"
+          stroke="currentColor"
+          strokeWidth="3"
+          strokeLinecap="round"
+        />
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </svg>
+    );
+  }
+
   function setPick(matchId: number, value: Pick) {
     if (!open) {
       setError("Palpites encerrados.");
@@ -136,16 +159,18 @@ export function PalpiteClient({
           <span className="tag">Palpitando como</span>
           {profiles.map((p) => {
             const sel = p.id === optimisticActiveId;
+            const isPendingThis = switching && sel;
             return (
               <button
                 key={p.id}
                 onClick={() => switchActive(p.id)}
                 disabled={switching}
-                className="font-cond inline-flex items-center gap-1.5 rounded-sm border-[1.5px] px-2.5 py-1 text-xs font-bold uppercase tracking-wider"
+                className="font-cond inline-flex items-center gap-1.5 rounded-sm border-[1.5px] px-2.5 py-1 text-xs font-bold uppercase tracking-wider transition-opacity"
                 style={{
                   borderColor: sel ? "#0b6b3a" : "#d5dde7",
                   background: sel ? "#0b6b3a" : "transparent",
                   color: sel ? "#fbfaf4" : "#0b2c5c",
+                  opacity: switching && !sel ? 0.4 : 1,
                 }}
               >
                 <Avatar
@@ -156,6 +181,7 @@ export function PalpiteClient({
                 />
                 {p.name}
                 {p.is_kid && <span className="text-[10px] opacity-75">🧒</span>}
+                {isPendingThis && <Spinner />}
               </button>
             );
           })}
@@ -206,7 +232,17 @@ export function PalpiteClient({
         </div>
       )}
 
-      <div className="flex-1 overflow-auto px-4 py-3.5">
+      <div className="relative flex-1 overflow-auto px-4 py-3.5">
+        {switching && (
+          <div className="pointer-events-none absolute inset-0 z-10 flex items-start justify-center bg-paper/70 pt-12 backdrop-blur-[1px]">
+            <div className="border-grass flex items-center gap-3 border-2 bg-paper px-4 py-2.5 shadow-lg">
+              <Spinner big />
+              <span className="font-cond text-sm font-bold uppercase tracking-wider text-grass">
+                Trocando perfil...
+              </span>
+            </div>
+          </div>
+        )}
         {matches.length === 0 && (
           <div className="border-2 border-dashed border-line bg-white/40 p-5 text-center text-sm text-ink2">
             Sem jogos abertos no momento. A Copa começa em junho de 2026.
