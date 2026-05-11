@@ -4,7 +4,9 @@ type Props = {
   className?: string;
 };
 
-export function BallMark({ size = 28, color = "#0b6b3a", className }: Props) {
+// Pentágono central + linhas radiais — gravetos preto/branco da bola de futebol.
+// Paths fielmente copiados do design (`_design/.../shared.jsx`).
+export function BallMark({ size = 24, color = "currentColor", className }: Props) {
   return (
     <svg
       width={size}
@@ -14,9 +16,11 @@ export function BallMark({ size = 28, color = "#0b6b3a", className }: Props) {
       className={className}
       aria-hidden
     >
-      <circle cx="12" cy="12" r="10" stroke={color} strokeWidth="1.5" />
+      <circle cx="12" cy="12" r="10.5" stroke={color} strokeWidth="1.5" />
+      <path d="M12 5l3.2 2.3 -1.2 3.8h-4l-1.2-3.8L12 5z" fill={color} />
+      <path d="M12 5v3.5" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
       <path
-        d="M12 2v6M12 16v6M2 12h6M16 12h6M5 5l4 4M15 15l4 4M19 5l-4 4M9 15l-4 4"
+        d="M5 11l3 1.2M19 11l-3 1.2M9 18l1.2-3M15 18l-1.2-3"
         stroke={color}
         strokeWidth="1.5"
         strokeLinecap="round"

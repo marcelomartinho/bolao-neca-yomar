@@ -1,10 +1,18 @@
 import type { Metadata } from "next";
-import { Inter_Tight, Geist_Mono } from "next/font/google";
+import { Inter_Tight, Barlow_Condensed, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 const interTight = Inter_Tight({
   subsets: ["latin", "latin-ext"],
   variable: "--font-inter-tight",
+  display: "swap",
+});
+
+const barlowCondensed = Barlow_Condensed({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700", "800"],
+  style: ["normal", "italic"],
+  variable: "--font-barlow-condensed",
   display: "swap",
 });
 
@@ -47,7 +55,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={`${interTight.variable} ${geistMono.variable}`}>
+    <html
+      lang="pt-BR"
+      className={`${interTight.variable} ${barlowCondensed.variable} ${geistMono.variable}`}
+    >
       <body className="paper-bg min-h-screen font-sans text-ink antialiased">{children}</body>
     </html>
   );

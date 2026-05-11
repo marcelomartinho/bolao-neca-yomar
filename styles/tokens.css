@@ -9,7 +9,7 @@
   /* Fonts (CSS vars povoadas via next/font/google em app/layout.tsx) */
   --font-sans: var(--font-inter-tight, "Inter Tight"), ui-sans-serif, system-ui, -apple-system,
     sans-serif;
-  --font-cond: var(--font-inter-tight, "Inter Tight"), var(--font-sans);
+  --font-cond: var(--font-barlow-condensed, "Barlow Condensed"), "Oswald", var(--font-sans);
   --font-mono: var(--font-geist-mono, "Geist Mono"), ui-monospace, SFMono-Regular, Menlo, monospace;
 
   /* Neutral palette */
