@@ -1,0 +1,240 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { TriRule } from "@/components/boletim/TriRule";
+import { BBrand } from "@/components/boletim/BBrand";
+import { Flag } from "@/components/Flag";
+import { Icon } from "@/components/Icon";
+import type { Pick } from "@/lib/supabase/types";
+import type { MatchRow } from "@/lib/db";
+import { TEAMS } from "@/lib/static-data";
+import { savePick } from "./actions";
+
+const GROUP_COLORS: Record<string, string> = {
+  A: "#0b6b3a", B: "#c79410", C: "#0b2c5c", D: "#0b6b3a",
+  E: "#c79410", F: "#0b2c5c", G: "#0b6b3a", H: "#c79410",
+  I: "#0b2c5c", J: "#0b6b3a", K: "#c79410", L: "#0b2c5c",
+};
+
+type Props = {
+  matches: MatchRow[];
+  initialPicks: Record<number, Pick>;
+  email: string;
+};
+
+export function PalpiteClient({ matches, initialPicks, email }: Props) {
+  const [picks, setPicks] = useState<Record<number, Pick>>(initialPicks);
+  const [savingMatchId, setSavingMatchId] = useState<number | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [, startTransition] = useTransition();
+
+  const filled = matches.filter((m) => picks[m.id]).length;
+
+  function setPick(matchId: number, value: Pick) {
+    const prev = picks[matchId];
+    setPicks({ ...picks, [matchId]: value });
+    setSavingMatchId(matchId);
+    setError(null);
+    startTransition(async () => {
+      const result = await savePick(matchId, value);
+      setSavingMatchId(null);
+      if (!result.ok) {
+        setError(result.error);
+        // revert
+        setPicks((p) => {
+          const c = { ...p };
+          if (prev) c[matchId] = prev;
+          else delete c[matchId];
+          return c;
+        });
+      }
+    });
+  }
+
+  return (
+    <main className="paper-bg flex min-h-screen flex-col text-ink">
+      <div className="flex h-[38px] items-center justify-between px-5 text-[13px] font-semibold">
+        <span>9:41</span>
+        <form action="/m/logout" method="POST">
+          <button className="text-xs font-medium text-ink2">Sair</button>
+        </form>
+      </div>
+
+      <div className="flex items-center justify-between border-b-2 border-ink px-5 py-2.5">
+        <BBrand size={16} />
+        <span className="tag">Cartela</span>
+      </div>
+      <TriRule height={2} />
+
+      <div className="border-b border-line px-5 py-3.5">
+        <div className="flex items-baseline justify-between">
+          <div>
+            <div className="tag">Sessão de {email}</div>
+            <h2 className="font-cond mt-0.5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tight">
+              Próximos <span className="text-grass">{matches.length}</span>{" "}
+              <span className="font-normal text-ink2">jogos</span>
+            </h2>
+          </div>
+          <div className="text-right">
+            <div className="tag">Palpitados</div>
+            <div
+              className={`font-cond text-[28px] font-extrabold leading-none ${
+                filled === matches.length ? "text-grass" : "text-ink"
+              }`}
+            >
+              {filled}
+              <span className="font-semibold text-ink2">/{matches.length}</span>
+            </div>
+          </div>
+        </div>
+        <div className="mt-3 flex gap-1">
+          {matches.map((m) => (
+            <div
+              key={m.id}
+              className="h-1 flex-1 rounded-sm"
+              style={{ background: picks[m.id] ? "#0b6b3a" : "#d5dde7" }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {error && (
+        <div className="border-b border-red-700 bg-red-50 px-5 py-2 text-xs text-red-700">
+          {error}
+        </div>
+      )}
+
+      <div className="flex flex-1 flex-col gap-3 overflow-auto px-4 py-3.5">
+        {matches.length === 0 && (
+          <div className="border-2 border-dashed border-line bg-white/40 p-5 text-center text-sm text-ink2">
+            Sem jogos abertos no momento. A Copa começa em junho de 2026.
+          </div>
+        )}
+        {matches.map((m) => {
+          const pick = picks[m.id];
+          const gColor = GROUP_COLORS[m.group_letter] ?? "#0b2c5c";
+          const teamA = TEAMS[m.team_a as keyof typeof TEAMS];
+          const teamB = TEAMS[m.team_b as keyof typeof TEAMS];
+          const isSaving = savingMatchId === m.id;
+          const date = new Date(m.starts_at);
+          const time = date.toLocaleTimeString("pt-BR", {
+            timeZone: "America/Sao_Paulo",
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          const day = date.toLocaleDateString("pt-BR", {
+            timeZone: "America/Sao_Paulo",
+            day: "2-digit",
+            month: "short",
+          });
+          return (
+            <div
+              key={m.id}
+              className="relative border-[1.5px] border-ink bg-white/65"
+              style={{ opacity: isSaving ? 0.7 : 1 }}
+            >
+              <div className="flex items-stretch border-b-[1.5px] border-ink bg-paper2">
+                <div className="flex min-w-[64px] flex-col items-start justify-center bg-ink px-3 py-1.5 text-paper">
+                  <span className="font-mono text-[8.5px] uppercase tracking-[0.22em] opacity-70">
+                    Jogo
+                  </span>
+                  <span className="font-cond text-[24px] font-extrabold leading-[1.05] tracking-[0.02em]">
+                    Nº {String(m.id).padStart(2, "0")}
+                  </span>
+                </div>
+                <div
+                  className="flex flex-col items-start justify-center px-3 py-1.5 text-white"
+                  style={{ background: gColor }}
+                >
+                  <span className="font-mono text-[8.5px] uppercase tracking-[0.22em] opacity-80">
+                    Grupo
+                  </span>
+                  <span className="font-cond text-[24px] font-extrabold leading-[1.05]">
+                    {m.group_letter}
+                  </span>
+                </div>
+                <div className="flex flex-1 flex-col items-end justify-center gap-px px-3">
+                  <span className="font-mono text-[9px] uppercase tracking-[0.18em] leading-none text-ink2">
+                    {day} · Rodada {m.round}
+                  </span>
+                  <span className="font-cond text-[15px] font-bold tracking-[0.02em] text-ink">
+                    {time} BRT
+                  </span>
+                </div>
+              </div>
+
+              <div className="px-3 pb-3 pt-3.5">
+                <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2.5">
+                  <div className="flex flex-col items-end gap-1">
+                    <Flag colors={teamA.colors} size="lg" />
+                    <span
+                      className="font-cond text-right text-sm font-bold uppercase leading-none tracking-[0.02em]"
+                      style={{ color: pick === "1" ? gColor : "#0b2c5c" }}
+                    >
+                      {teamA.name}
+                    </span>
+                  </div>
+                  <span className="font-cond text-base italic font-normal text-ink2">vs</span>
+                  <div className="flex flex-col items-start gap-1">
+                    <Flag colors={teamB.colors} size="lg" />
+                    <span
+                      className="font-cond text-sm font-bold uppercase leading-none tracking-[0.02em]"
+                      style={{ color: pick === "2" ? gColor : "#0b2c5c" }}
+                    >
+                      {teamB.name}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="mt-3 grid grid-cols-3 gap-1.5">
+                  {([
+                    { v: "1" as Pick, label: teamA.name },
+                    { v: "X" as Pick, label: "Empate" },
+                    { v: "2" as Pick, label: teamB.name },
+                  ]).map((opt) => {
+                    const isSel = pick === opt.v;
+                    return (
+                      <button
+                        key={opt.v}
+                        onClick={() => setPick(m.id, opt.v)}
+                        disabled={isSaving}
+                        className="flex flex-col items-center gap-0.5 rounded-sm border-[1.5px] py-1.5 disabled:cursor-not-allowed"
+                        style={{
+                          borderColor: isSel ? gColor : "#0b2c5c",
+                          background: isSel ? gColor : "transparent",
+                          color: isSel ? "#fff" : "#0b2c5c",
+                        }}
+                      >
+                        <span className="font-cond text-lg font-extrabold leading-none">
+                          {opt.v}
+                        </span>
+                        <span className="font-mono text-[8.5px] uppercase leading-none tracking-[0.12em] opacity-90">
+                          {opt.label}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="flex items-center gap-2.5 border-t-2 border-ink bg-white/60 px-5 py-3">
+        <div className="flex-1">
+          <div className="tag">Auto-salva a cada palpite</div>
+          <div className="font-cond text-base font-bold text-ink">
+            {filled}/{matches.length} carimbados
+          </div>
+        </div>
+        <a
+          href="/ranking"
+          className="font-cond inline-flex items-center gap-2 rounded-sm border-2 border-ink bg-transparent px-4 py-2 text-xs font-bold uppercase tracking-wider text-ink"
+        >
+          <Icon.ArrowRight s={14} /> Ver ranking
+        </a>
+      </div>
+    </main>
+  );
+}
