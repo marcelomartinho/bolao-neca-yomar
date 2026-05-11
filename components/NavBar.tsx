@@ -16,7 +16,7 @@ const MOBILE = [
   { href: "/" as const, label: "Capa", icon: <CapaGlyph />, match: (p: string) => p === "/" },
   { href: "/m/palpite" as const, label: "Cartela", icon: <CartelaGlyph />, match: (p: string) => p.startsWith("/m/palpite") || p.startsWith("/m/jogo") },
   { href: "/ranking" as const, label: "Ranking", icon: <Icon.Trophy s={20} />, match: (p: string) => p === "/ranking" },
-  { href: "/m/perfil" as const, label: "Perfil", icon: <PerfilGlyph />, match: (p: string) => p.startsWith("/m/perfil") || p.startsWith("/m/familia") },
+  { href: "/m/familia" as const, label: "Família", icon: <PerfilGlyph />, match: (p: string) => p.startsWith("/m/perfil") || p.startsWith("/m/familia") },
 ] satisfies ReadonlyArray<Omit<Item<string>, "href"> & { href: Route }>;
 
 const DESKTOP = [
@@ -25,6 +25,7 @@ const DESKTOP = [
   { href: "/tabela" as const, label: "Tabela" },
   { href: "/ranking" as const, label: "Ranking" },
   { href: "/regulamento" as const, label: "Regulamento" },
+  { href: "/m/familia" as const, label: "Família" },
 ] satisfies ReadonlyArray<{ href: Route; label: string }>;
 
 export function NavBar() {
