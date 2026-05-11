@@ -29,7 +29,7 @@ const REGRAS: Array<[string, string]> = [
   ],
   [
     "Discussão",
-    "Toda contestação é decidida em mesa, com Neca e Yomar. Voto de minerva é da Vó Cida.",
+    "Toda contestação é decidida em mesa, com Neca e Yomar. Palavra final é da organização.",
   ],
 ];
 
@@ -97,7 +97,7 @@ export default function RegulamentoPage() {
             <ul className="m-0 mt-2 flex list-none flex-col gap-1.5 p-0 text-xs leading-snug">
               <li>· Jogo cancelado vira anulado pra todo mundo.</li>
               <li>· Prorrogação e pênaltis não contam — só os 90 min.</li>
-              <li>· Bento, se ganhar, divide com a Mila. (Acordo de irmãos.)</li>
+              <li>· Premiação é paga em até 7 dias após o último jogo da fase de grupos.</li>
             </ul>
           </div>
 

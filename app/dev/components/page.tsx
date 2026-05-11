@@ -55,7 +55,7 @@ export default function DevComponentsPage() {
           <Avatar name="Neca" />
           <Avatar name="Yomar" />
           <Avatar name="Belle" size={56} />
-          <Avatar name="Vó Cida" emoji="👵" size={48} />
+          <Avatar name="Marcelo" size={48} />
         </Section>
 
         <Section title="Icon">

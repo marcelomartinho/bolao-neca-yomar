@@ -165,15 +165,23 @@ export type Participant = {
 };
 
 export const PARTICIPANTS: Participant[] = [
-  { id: "neca", name: "Neca", initials: "N", host: true, score: 17, pos: 1 },
-  { id: "yomar", name: "Yomar", initials: "Y", host: true, score: 16, pos: 2 },
-  { id: "belle", name: "Belle", initials: "B", score: 15, pos: 3 },
-  { id: "lud", name: "Lud", initials: "L", score: 14, pos: 4 },
-  { id: "mila", name: "Mila", initials: "M", score: 14, pos: 4 },
-  { id: "bruno", name: "Bruno", initials: "Br", score: 12, pos: 6 },
-  { id: "bento", name: "Bento", initials: "Bt", score: 11, pos: 7 },
-  { id: "tio", name: "Tio Zé", initials: "Z", score: 10, pos: 8 },
-  { id: "vovo", name: "Vó Cida", initials: "C", emoji: "👵", score: 8, pos: 9 },
+  { id: "nilcynea", name: "Neca", initials: "N", host: true, score: 0, pos: 1 },
+  { id: "yomar", name: "Yomar", initials: "Y", host: true, score: 0, pos: 1 },
+  { id: "marcelo", name: "Marcelo", initials: "M", score: 0, pos: 1 },
+  { id: "isabelle", name: "Belle", initials: "B", score: 0, pos: 1 },
+  { id: "ludmarci", name: "Ludmarci", initials: "L", score: 0, pos: 1 },
+  { id: "ludmila", name: "Ludmila", initials: "Mi", score: 0, pos: 1 },
+  { id: "ana-julia", name: "Ana Julia", initials: "AJ", score: 0, pos: 1 },
+  { id: "ana-luisa", name: "Ana Luisa", initials: "AL", score: 0, pos: 1 },
+  { id: "bento", name: "Bento", initials: "Bt", score: 0, pos: 1 },
+  { id: "bruno", name: "Bruno", initials: "Br", score: 0, pos: 1 },
+  { id: "danilo", name: "Danilo", initials: "Dn", score: 0, pos: 1 },
+  { id: "fernanda", name: "Fernanda", initials: "Fe", score: 0, pos: 1 },
+  { id: "filipe", name: "Filipe", initials: "Fi", score: 0, pos: 1 },
+  { id: "gustavo", name: "Gustavo", initials: "Gu", score: 0, pos: 1 },
+  { id: "joaquim", name: "Joaquim", initials: "Jo", score: 0, pos: 1 },
+  { id: "leonardo", name: "Leonardo", initials: "Le", score: 0, pos: 1 },
+  { id: "vicente", name: "Vicente", initials: "Vi", score: 0, pos: 1 },
 ];
 
 export const PRIZES = { first: 10000, second: 5000 };
