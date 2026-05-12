@@ -22,6 +22,7 @@ export default async function RankingPage() {
     .filter((r) => r.id !== null);
 
   const top3 = sorted.slice(0, 3);
+  const hasScores = sorted.some((p) => (p.score ?? 0) > 0);
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
@@ -41,7 +42,7 @@ export default async function RankingPage() {
       </div>
 
       <h2 className="font-cond m-0 break-words px-4 pb-1.5 pt-3 text-2xl font-extrabold uppercase leading-[1.05] tracking-tight md:px-9 md:pt-4 md:text-[44px] md:leading-none">
-        {top3.length === 0 ? (
+        {!hasScores ? (
           <span className="text-ink2">Ranking ainda em branco.</span>
         ) : top3.length === 1 ? (
           <>
@@ -59,11 +60,14 @@ export default async function RankingPage() {
 
       <div className="grid flex-1 min-h-0 grid-cols-1 md:[grid-template-columns:1.05fr_1fr]">
         <div className="px-4 pb-5 pt-3 md:px-9 md:pb-7 md:pt-4">
-          {top3.length === 0 ? (
+          {!hasScores ? (
             <div className="border-2 border-dashed border-line bg-white/40 p-6 text-sm text-ink2">
-              Ninguém palpitou ainda. Seja o primeiro:{" "}
+              {resolved === 0
+                ? "Pódio aparece quando o primeiro jogo for resolvido pelo admin."
+                : "Ninguém pontuou ainda. "}
+              {" "}
               <Link href="/m/login" className="underline">
-                entrar
+                Entrar na cartela
               </Link>
               .
             </div>
