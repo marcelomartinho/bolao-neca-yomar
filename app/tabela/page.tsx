@@ -32,8 +32,8 @@ export default function TabelaPage() {
         subtitle="72 jogos · horários em Brasília"
       />
 
-      <div className="flex flex-wrap items-center gap-2 border-b border-line px-9 py-3">
-        <span className="mr-1 font-mono text-[10px] uppercase tracking-[0.18em] text-ink2">
+      <div className="flex flex-wrap items-center gap-1.5 border-b border-line px-4 py-2.5 md:gap-2 md:px-9 md:py-3">
+        <span className="mr-1 font-mono text-[9px] uppercase tracking-[0.16em] text-ink2 md:text-[10px] md:tracking-[0.18em]">
           Dias
         </span>
         {days.map((d) => {
@@ -42,7 +42,7 @@ export default function TabelaPage() {
             <a
               key={d}
               href={`#dia-${d}`}
-              className="font-cond border border-line bg-transparent px-2.5 py-1 text-xs font-bold uppercase tracking-wider text-ink hover:border-ink"
+              className="font-cond border border-line bg-transparent px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-ink hover:border-ink md:px-2.5 md:text-xs"
             >
               {formatDayBRT(dt)}
             </a>
@@ -58,14 +58,13 @@ export default function TabelaPage() {
             <div
               id={`dia-${dKey}`}
               key={dKey}
-              className="grid border-b border-line scroll-mt-4"
-              style={{ gridTemplateColumns: "180px 1fr" }}
+              className="flex flex-col scroll-mt-4 border-b border-line md:grid md:[grid-template-columns:180px_1fr]"
             >
-              <div className="flex flex-col justify-center border-r border-dashed border-line px-4 py-3 pl-9">
-                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-gold">
+              <div className="flex flex-col justify-center border-b border-dashed border-line bg-paper2/40 px-4 py-2 md:border-b-0 md:border-r md:bg-transparent md:py-3 md:pl-9">
+                <span className="font-mono text-[9px] uppercase tracking-[0.16em] text-gold md:text-[10px] md:tracking-[0.18em]">
                   {formatDayBRT(dt)}
                 </span>
-                <span className="font-cond mt-0.5 text-[26px] font-extrabold leading-none">
+                <span className="font-cond mt-0.5 text-lg font-extrabold leading-none md:text-[26px]">
                   Rodada {list[0].round} · {list.length} jogos
                 </span>
               </div>
@@ -73,28 +72,33 @@ export default function TabelaPage() {
                 {list.map((m, i) => (
                   <div
                     key={m.id}
-                    className="grid items-center gap-2 px-7 py-1.5"
+                    className="grid items-center gap-2 px-4 py-1.5 [grid-template-columns:40px_44px_1.3fr_22px_1.3fr] md:px-7 md:[grid-template-columns:48px_50px_1.4fr_32px_1.4fr_88px]"
                     style={{
-                      gridTemplateColumns: "48px 50px 1.4fr 32px 1.4fr 88px",
                       borderBottom: i === list.length - 1 ? "none" : "1px dashed #d5dde7",
                     }}
                   >
-                    <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink2">
+                    <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-ink2 md:text-[10px] md:tracking-[0.1em]">
                       nº {String(m.id).padStart(2, "0")}
                     </span>
-                    <span className="font-mono text-[11px] text-ink2">
+                    <span className="font-mono text-[10px] text-ink2 md:text-[11px]">
                       {formatBRT(m.startsAt)}
                     </span>
-                    <div className="flex items-center justify-end gap-2">
-                      <span className="font-cond text-sm font-semibold">{TEAMS[m.a].name}</span>
-                      <Flag code={m.a} name={TEAMS[m.a].name} />
+                    <div className="flex min-w-0 items-center justify-end gap-1.5">
+                      <span className="font-cond truncate text-xs font-semibold md:text-sm">
+                        {TEAMS[m.a].name}
+                      </span>
+                      <Flag code={m.a} name={TEAMS[m.a].name} size="sm" />
                     </div>
-                    <span className="font-cond text-center text-base italic text-ink2">vs</span>
-                    <div className="flex items-center gap-2">
-                      <Flag code={m.b} name={TEAMS[m.b].name} />
-                      <span className="font-cond text-sm font-semibold">{TEAMS[m.b].name}</span>
+                    <span className="font-cond text-center text-xs italic text-ink2 md:text-base">
+                      vs
+                    </span>
+                    <div className="flex min-w-0 items-center gap-1.5">
+                      <Flag code={m.b} name={TEAMS[m.b].name} size="sm" />
+                      <span className="font-cond truncate text-xs font-semibold md:text-sm">
+                        {TEAMS[m.b].name}
+                      </span>
                     </div>
-                    <span className="text-right font-mono text-[10px] text-ink2">
+                    <span className="hidden text-right font-mono text-[10px] text-ink2 md:inline">
                       Grp {m.group} · {m.city.split(" ")[0]}
                     </span>
                   </div>

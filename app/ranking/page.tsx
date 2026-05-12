@@ -28,20 +28,19 @@ export default async function RankingPage() {
       <TriRule height={3} />
       <PageHeader pageLabel={`Boletim do dia · ${formatToday()}`} subtitle="Pág. 3 — ranking geral" />
 
-      <div className="flex items-center gap-3.5 border-b border-line px-9 py-4">
-        <Stamp color="#0b6b3a" rot={-2}>{resolved} jogos resolvidos</Stamp>
+      <div className="flex flex-wrap items-center gap-2 border-b border-line px-4 py-3 md:gap-3.5 md:px-9 md:py-4">
+        <Stamp color="#0b6b3a" rot={-2}>{resolved} resolvidos</Stamp>
         <Stamp color="#c79410" rot={3}>{remaining} a faltar</Stamp>
         <Stamp color="#0b2c5c" rot={-1}>Edição 02</Stamp>
-        <div className="flex-1" />
         <Link
           href="/m/palpite"
-          className="font-cond inline-flex items-center gap-2 rounded-sm border-2 border-ink bg-transparent px-3 py-1.5 text-xs font-bold uppercase tracking-wider"
+          className="font-cond ml-auto inline-flex items-center gap-1.5 rounded-sm border-2 border-ink bg-transparent px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider md:px-3 md:py-1.5 md:text-xs"
         >
-          <Icon.ArrowRight s={14} /> Minha cartela
+          <Icon.ArrowRight s={12} /> Cartela
         </Link>
       </div>
 
-      <h2 className="font-cond m-0 px-9 pb-1.5 pt-4 text-[44px] font-extrabold uppercase leading-none tracking-tight">
+      <h2 className="font-cond m-0 break-words px-4 pb-1.5 pt-3 text-2xl font-extrabold uppercase leading-[1.05] tracking-tight md:px-9 md:pt-4 md:text-[44px] md:leading-none">
         {top3[0]?.name ?? "Ainda sem palpiteiros"}{" "}
         <span className="italic font-normal">—</span>
         {top3[1] ? (
@@ -55,8 +54,8 @@ export default async function RankingPage() {
         )}
       </h2>
 
-      <div className="grid flex-1 min-h-0" style={{ gridTemplateColumns: "1.05fr 1fr" }}>
-        <div className="px-9 pb-7 pt-4">
+      <div className="grid flex-1 min-h-0 grid-cols-1 md:[grid-template-columns:1.05fr_1fr]">
+        <div className="px-4 pb-5 pt-3 md:px-9 md:pb-7 md:pt-4">
           {top3.length === 0 ? (
             <div className="border-2 border-dashed border-line bg-white/40 p-6 text-sm text-ink2">
               Ninguém palpitou ainda. Seja o primeiro:{" "}
@@ -76,9 +75,9 @@ export default async function RankingPage() {
                 return (
                   <div
                     key={p.id ?? i}
-                    className="relative flex flex-col items-center gap-2 border-2 px-3.5 py-4"
+                    className="relative flex flex-col items-center gap-1.5 overflow-hidden border-2 px-2 py-3 md:gap-2 md:px-3.5 md:py-4"
                     style={{
-                      borderColor: i === 1 ? "#0b2c5c" : "#0b2c5c",
+                      borderColor: "#0b2c5c",
                       background: bg,
                       color: fg,
                       transform: `rotate(${(i - 1) * 0.6}deg)`,
@@ -90,24 +89,26 @@ export default async function RankingPage() {
                         style={{ position: "absolute", top: -2, left: -2, right: -2, width: "auto" }}
                       />
                     )}
-                    <div
-                      className="font-cond text-[46px] font-extrabold leading-none tracking-tight"
-                      style={{ color: i === 0 ? "#c79410" : "#c79410" }}
-                    >
+                    <div className="font-cond text-3xl font-extrabold leading-none tracking-tight text-gold md:text-[46px]">
                       {p.pos}º
                     </div>
                     <Avatar
                       name={p.name ?? "?"}
                       initials={p.initials}
                       emoji={p.emoji}
-                      size={48}
+                      size={32}
                     />
-                    <div className="font-cond text-lg font-bold uppercase">{p.name}</div>
                     <div
-                      className="font-mono text-[11px] uppercase tracking-[0.1em]"
+                      className="font-cond max-w-full truncate text-center text-[11px] font-bold uppercase md:text-lg"
+                      title={p.name ?? ""}
+                    >
+                      {p.name}
+                    </div>
+                    <div
+                      className="font-mono text-[10px] uppercase tracking-[0.06em] md:text-[11px]"
                       style={{ opacity: i === 0 ? 0.9 : 0.65 }}
                     >
-                      {p.score ?? 0} pontos
+                      {p.score ?? 0} pts
                     </div>
                   </div>
                 );
@@ -129,20 +130,20 @@ export default async function RankingPage() {
           </div>
         </div>
 
-        <div className="border-l border-line py-4">
-          <div className="grid grid-cols-[32px_1fr_56px_56px] border-b border-line px-7 pb-2 font-mono text-[10px] uppercase tracking-[0.14em] text-ink2">
+        <div className="border-t border-line py-4 md:border-l md:border-t-0">
+          <div className="grid grid-cols-[32px_1fr_56px_56px] border-b border-line px-4 pb-2 font-mono text-[10px] uppercase tracking-[0.14em] text-ink2 md:px-7">
             <span>#</span>
             <span>Participante</span>
             <span className="text-right">Acertos</span>
             <span className="text-right">Pts</span>
           </div>
           {sorted.length === 0 ? (
-            <div className="px-7 py-6 text-sm text-ink2">Sem palpiteiros.</div>
+            <div className="px-4 py-6 text-sm text-ink2 md:px-7">Sem palpiteiros.</div>
           ) : (
             sorted.map((p) => (
               <div
                 key={p.id}
-                className="grid grid-cols-[32px_1fr_56px_56px] items-center border-b border-dashed border-line px-7 py-2.5"
+                className="grid grid-cols-[32px_1fr_56px_56px] items-center border-b border-dashed border-line px-4 py-2.5 md:px-7"
               >
                 <span
                   className="font-cond text-base font-bold"

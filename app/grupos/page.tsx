@@ -14,18 +14,15 @@ export default function GruposPage() {
       <TriRule height={3} />
       <PageHeader pageLabel="Pág. 2 — Os doze grupos" subtitle="48 seleções · sorteio simulado" />
 
-      <div className="flex items-center gap-3 border-b border-line px-9 py-4">
-        <h2 className="font-cond m-0 text-4xl font-extrabold uppercase leading-none tracking-tight">
+      <div className="flex flex-wrap items-center gap-2 border-b border-line px-4 py-3 md:gap-3 md:px-9 md:py-4">
+        <h2 className="font-cond m-0 text-2xl font-extrabold uppercase leading-none tracking-tight md:text-4xl">
           Quem joga com quem
         </h2>
         <Stamp color="#0b6b3a" rot={-2}>Brasil no D</Stamp>
         <Stamp color="#0b2c5c" rot={3}>Sorteio dez/2025</Stamp>
       </div>
 
-      <div
-        className="grid flex-1 min-h-0 gap-3 px-7 py-4"
-        style={{ gridTemplateColumns: "repeat(4, 1fr)", gridTemplateRows: "repeat(3, 1fr)" }}
-      >
+      <div className="grid flex-1 min-h-0 grid-cols-2 gap-2 px-3 py-3 md:grid-cols-4 md:gap-3 md:px-7 md:py-4">
         {GROUPS.map((g) => {
           const hasBR = g.teams.includes("BRA");
           return (

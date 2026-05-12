@@ -39,39 +39,36 @@ export default function RegulamentoPage() {
       <TriRule height={3} />
       <PageHeader pageLabel="Pág. 6 — Regulamento oficial" subtitle="Letras miúdas, regras curtas" />
 
-      <div className="flex items-end gap-5 border-b border-line px-9 pb-3 pt-6">
-        <h2 className="font-cond m-0 text-[64px] font-extrabold uppercase leading-[0.88] tracking-tight">
-          As nove<br />
+      <div className="flex flex-wrap items-end gap-3 border-b border-line px-4 pb-3 pt-4 md:gap-5 md:px-9 md:pt-6">
+        <h2 className="font-cond m-0 text-3xl font-extrabold uppercase leading-[0.95] tracking-tight md:text-[64px] md:leading-[0.88]">
+          As nove{" "}
           <span className="text-grass">regras</span>{" "}
           <span className="italic font-normal text-ink2">de sempre.</span>
         </h2>
         <div className="flex-1" />
         <div className="text-right">
           <Stamp color="#c79410" rot={4}>Aprovado</Stamp>
-          <div className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-ink2">
+          <div className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.14em] text-ink2 md:text-[10px] md:tracking-[0.16em]">
             Org.: Neca &amp; Yomar
           </div>
         </div>
       </div>
 
-      <div
-        className="grid flex-1 min-h-0"
-        style={{ gridTemplateColumns: "1fr 1fr 280px" }}
-      >
+      <div className="grid flex-1 min-h-0 grid-cols-1 md:[grid-template-columns:1fr_1fr_280px]">
         <RegraCol
           regras={REGRAS.slice(0, 5)}
           offset={0}
           numberColor="#0b6b3a"
-          className="border-r border-dashed border-line"
+          className="border-b border-dashed border-line md:border-b-0 md:border-r"
         />
         <RegraCol
           regras={REGRAS.slice(5)}
           offset={5}
           numberColor="#0b2c5c"
-          className="border-r border-line"
+          className="border-b border-line md:border-b-0 md:border-r"
         />
 
-        <div className="flex flex-col gap-3 px-7 py-4">
+        <div className="flex flex-col gap-3 px-4 py-4 md:px-7">
           <div className="relative border-2 border-ink bg-white/60 px-3.5 py-3">
             <TriRule
               height={3}
@@ -128,7 +125,7 @@ function RegraCol({
   className?: string;
 }) {
   return (
-    <div className={`flex flex-col gap-3 px-7 py-4 ${className ?? ""}`}>
+    <div className={`flex flex-col gap-3 px-4 py-4 md:px-7 ${className ?? ""}`}>
       {regras.map(([t, txt], i) => (
         <div key={t} className="grid gap-2.5" style={{ gridTemplateColumns: "34px 1fr" }}>
           <span

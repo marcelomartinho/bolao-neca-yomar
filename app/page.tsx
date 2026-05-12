@@ -17,64 +17,64 @@ export default async function FrontPage() {
       <DeadlineBanner deadlineIso={config.picks_deadline} />
 
       {/* Masthead */}
-      <div className="flex items-end justify-between border-b-2 border-ink px-9 pb-3.5 pt-5">
+      <div className="flex flex-wrap items-end justify-between gap-2 border-b-2 border-ink px-4 pb-3 pt-4 md:px-9 md:pb-3.5 md:pt-5">
         <div>
-          <div className="font-mono text-[10px] uppercase tracking-[0.2em] text-grass">
+          <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-grass md:text-[10px] md:tracking-[0.2em]">
             Boletim periódico da família
           </div>
-          <h1 className="font-cond mt-0.5 text-[60px] font-bold uppercase leading-[0.9]">
+          <h1 className="font-cond mt-0.5 text-[42px] font-bold uppercase leading-[0.9] md:text-[60px]">
             O Bolão
           </h1>
         </div>
         <div className="text-right">
-          <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-gold">
+          <div className="font-mono text-[9px] uppercase tracking-[0.16em] text-gold md:text-[10px] md:tracking-[0.18em]">
             vol. ii — copa do mundo
           </div>
-          <div className="font-cond mt-0.5 text-[22px] font-bold tracking-tight">
+          <div className="font-cond mt-0.5 text-base font-bold tracking-tight md:text-[22px]">
             2026 · 48 países
           </div>
         </div>
       </div>
 
       {/* Sub-strip */}
-      <div className="flex justify-between border-b border-line px-9 py-1.5 font-mono text-[11px] uppercase tracking-[0.12em] text-ink2">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-b border-line px-4 py-1.5 font-mono text-[9px] uppercase tracking-[0.1em] text-ink2 md:px-9 md:text-[11px] md:tracking-[0.12em]">
         <span>Distribuído gratuitamente</span>
-        <span>11 jun → 26 jun · 72 jogos</span>
+        <span className="hidden sm:inline">11 jun → 26 jun · 72 jogos</span>
         <span>Org.: Neca &amp; Yomar</span>
       </div>
 
-      <div className="grid flex-1 min-h-0" style={{ gridTemplateColumns: "1.4fr 1fr" }}>
+      <div className="grid flex-1 min-h-0 grid-cols-1 md:[grid-template-columns:1.4fr_1fr]">
         {/* Editorial */}
-        <div className="flex flex-col border-r border-line px-9 py-7">
-          <div className="flex items-center gap-3.5">
+        <div className="flex flex-col border-b border-line px-4 py-5 md:border-b-0 md:border-r md:px-9 md:py-7">
+          <div className="flex flex-wrap items-center gap-2 md:gap-3.5">
             <Stamp color="#0b6b3a" rot={-3}>Aberto</Stamp>
             <Stamp color="#c79410" rot={2}>Premiação dobrou</Stamp>
           </div>
-          <h2 className="font-cond mt-5 text-[56px] font-extrabold uppercase leading-[0.92] tracking-tight">
-            Volta o bolão da casa<br />
-            <span className="italic font-normal text-grass">e desta vez</span><br />
+          <h2 className="font-cond mt-4 text-3xl font-extrabold uppercase leading-[0.95] tracking-tight md:mt-5 md:text-[56px] md:leading-[0.92]">
+            Volta o bolão da casa{" "}
+            <span className="italic font-normal text-grass">e desta vez</span>{" "}
             vale <span className="italic text-gold">quinze mil</span>.
           </h2>
-          <p className="mt-5 max-w-[540px] text-[14.5px] leading-relaxed">
+          <p className="mt-4 max-w-[540px] text-sm leading-relaxed md:mt-5 md:text-[14.5px]">
             Foram quatro anos esperando. A Copa volta — agora em três países e com 48 seleções
             — e o bolão da família volta junto, com regulamento de sempre:{" "}
             <strong>marcar 1, X ou 2</strong> em cada um dos 72 jogos da fase de grupos. Quem
             somar mais acertos, leva. Empate, divide.
           </p>
-          <div className="mt-auto flex items-center gap-3 pt-5">
+          <div className="mt-5 flex flex-wrap items-center gap-2.5 md:mt-auto md:gap-3 md:pt-5">
             <Link
               href="/m/login"
-              className="bg-grass border-grass text-paper font-cond inline-flex items-center gap-2 rounded-sm border-2 px-5 py-3 text-[15px] font-bold uppercase tracking-wider"
+              className="bg-grass border-grass text-paper font-cond inline-flex items-center gap-2 rounded-sm border-2 px-4 py-2.5 text-sm font-bold uppercase tracking-wider md:px-5 md:py-3 md:text-[15px]"
             >
-              <Icon.Check s={16} /> Entrar agora
+              <Icon.Check s={14} /> Entrar agora
             </Link>
             <Link
               href="/regulamento"
-              className="text-ink border-ink font-cond inline-flex items-center gap-2 rounded-sm border-2 bg-transparent px-5 py-3 text-[15px] font-bold uppercase tracking-wider"
+              className="text-ink border-ink font-cond inline-flex items-center gap-2 rounded-sm border-2 bg-transparent px-4 py-2.5 text-sm font-bold uppercase tracking-wider md:px-5 md:py-3 md:text-[15px]"
             >
               Ler regulamento
             </Link>
-            <div className="ml-auto flex flex-col items-end gap-[3px]">
+            <div className="ml-auto hidden flex-col items-end gap-[3px] md:flex">
               <TriRule height={3} style={{ width: 64 }} />
               <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-ink2">
                 made in brasil
@@ -84,9 +84,9 @@ export default async function FrontPage() {
         </div>
 
         {/* Right column */}
-        <div className="flex flex-col gap-5 px-8 py-7">
+        <div className="flex flex-col gap-4 px-4 py-5 md:gap-5 md:px-8 md:py-7">
           {/* Prize */}
-          <div className="relative border-2 border-ink bg-white/55 px-5 py-4">
+          <div className="relative border-2 border-ink bg-white/55 px-4 py-3.5 md:px-5 md:py-4">
             <TriRule
               height={3}
               style={{ position: "absolute", top: -2, left: -2, right: -2, width: "auto" }}
@@ -98,16 +98,16 @@ export default async function FrontPage() {
               <Icon.Trophy s={18} />
             </div>
             <div className="mt-3 flex items-baseline gap-2">
-              <span className="font-cond text-[26px] font-bold text-gold">1º</span>
-              <span className="flex-1 text-xs uppercase tracking-[0.06em] text-ink2">primeiro</span>
-              <span className="font-cond text-[38px] font-extrabold tracking-tight text-grass">
+              <span className="font-cond text-xl font-bold text-gold md:text-[26px]">1º</span>
+              <span className="flex-1 text-[10px] uppercase tracking-[0.06em] text-ink2 md:text-xs">primeiro</span>
+              <span className="font-cond text-2xl font-extrabold tracking-tight text-grass md:text-[38px]">
                 R$ 10.000
               </span>
             </div>
             <div className="mt-1.5 flex items-baseline gap-2 border-t border-dashed border-line pt-1.5">
-              <span className="font-cond text-[22px] font-bold text-ink2">2º</span>
-              <span className="flex-1 text-xs uppercase tracking-[0.06em] text-ink2">segundo</span>
-              <span className="font-cond text-[28px] font-bold tracking-tight text-bluebr">
+              <span className="font-cond text-lg font-bold text-ink2 md:text-[22px]">2º</span>
+              <span className="flex-1 text-[10px] uppercase tracking-[0.06em] text-ink2 md:text-xs">segundo</span>
+              <span className="font-cond text-xl font-bold tracking-tight text-bluebr md:text-[28px]">
                 R$ 5.000
               </span>
             </div>
