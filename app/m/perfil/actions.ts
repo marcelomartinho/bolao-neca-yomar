@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/activity";
 
 const UUID_RE = /^[0-9a-f-]{36}$/i;
 
@@ -57,6 +58,7 @@ export async function updateProfile(formData: FormData) {
     );
   }
 
+  await logActivity(targetId, "profile.update", { name, initials, emoji });
   revalidatePath("/m/perfil");
   revalidatePath("/m/familia");
   revalidatePath("/ranking");

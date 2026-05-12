@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/activity";
 
 export async function addKid(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim().slice(0, 40);
@@ -28,8 +29,9 @@ export async function addKid(formData: FormData) {
     .maybeSingle();
   if (!self) redirect("/m/familia/novo?error=perfil-pai-nao-encontrado");
 
+  const kidId = crypto.randomUUID();
   const { error } = await supabase.from("profiles").insert({
-    id: crypto.randomUUID(),
+    id: kidId,
     name,
     initials,
     emoji,
@@ -41,6 +43,7 @@ export async function addKid(formData: FormData) {
     redirect("/m/familia/novo?error=nao-foi-possivel-salvar");
   }
 
+  await logActivity(kidId, "kid.add", { name, parent_id: self.id });
   revalidatePath("/m/familia");
   revalidatePath("/m/palpite");
   revalidatePath("/ranking");
@@ -63,6 +66,7 @@ export async function removeKid(formData: FormData) {
     console.error("removeKid failed", error);
     redirect("/m/familia?error=nao-foi-possivel-remover");
   }
+  await logActivity(kidId, "kid.remove", {});
   revalidatePath("/m/familia");
   revalidatePath("/ranking");
   redirect("/m/familia");

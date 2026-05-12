@@ -69,6 +69,17 @@ export default async function AdminPage() {
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
       <PageHeader pageLabel="Pág. 6 — Administração" subtitle="Configuração & resultados" />
+      <div className="flex flex-wrap items-center gap-2 border-b border-line bg-paper2/40 px-4 py-2.5 md:px-9">
+        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-ink2">
+          Ferramentas
+        </span>
+        <a
+          href="/admin/atividade"
+          className="font-cond inline-flex items-center gap-1.5 rounded-sm border-2 border-ink bg-transparent px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-ink"
+        >
+          📜 Log de atividade
+        </a>
+      </div>
       <div className="border-b border-line px-4 py-5 md:px-9">
         <DeadlineEditor initialDeadline={config.picks_deadline} />
       </div>

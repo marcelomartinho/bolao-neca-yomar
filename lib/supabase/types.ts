@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      activity_log: {
+        Row: {
+          acting_auth_user_id: string | null
+          action: string
+          created_at: string
+          id: string
+          payload: Json
+          user_id: string | null
+        }
+        Insert: {
+          acting_auth_user_id?: string | null
+          action: string
+          created_at?: string
+          id?: string
+          payload?: Json
+          user_id?: string | null
+        }
+        Update: {
+          acting_auth_user_id?: string | null
+          action?: string
+          created_at?: string
+          id?: string
+          payload?: Json
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "ranking"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       app_config: {
         Row: {
           created_at: string

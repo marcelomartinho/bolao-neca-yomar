@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/activity";
 import type { EmailOtpType } from "@supabase/supabase-js";
 
 const ALLOWED_PATHS = new Set([
@@ -43,5 +44,18 @@ export async function GET(request: NextRequest) {
       `${origin}/m/login?error=${encodeURIComponent(error.message)}`,
     );
   }
+
+  // Log login event (best effort). At this point cookies are set.
+  try {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      await logActivity(user.id, "auth.login", { type });
+    }
+  } catch {
+    // swallow
+  }
+
   return NextResponse.redirect(`${origin}${next}`);
 }

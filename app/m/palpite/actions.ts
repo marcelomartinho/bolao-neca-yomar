@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { ACTIVE_PROFILE_COOKIE } from "@/lib/active-profile";
+import { logActivity } from "@/lib/activity";
 import type { Pick } from "@/lib/supabase/types";
 
 export type SavePickResult =
@@ -43,6 +44,7 @@ export async function savePick(matchId: number, pick: Pick): Promise<SavePickRes
     );
   if (error) return { ok: false, error: error.message };
 
+  await logActivity(profileId, "pick.save", { match_id: matchId, pick });
   revalidatePath("/ranking");
   revalidatePath(`/${profileId}`);
   return { ok: true };

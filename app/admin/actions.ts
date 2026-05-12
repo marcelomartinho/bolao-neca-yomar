@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { logActivity } from "@/lib/activity";
 import type { Pick } from "@/lib/supabase/types";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
@@ -43,6 +44,7 @@ export async function setPicksDeadline(iso: string | null): Promise<ActionResult
     console.error("setPicksDeadline failed", error);
     return { ok: false, error: "Não foi possível salvar o prazo" };
   }
+  await logActivity(null, "config.deadline", { deadline: iso });
   revalidatePath("/");
   revalidatePath("/admin");
   revalidatePath("/m/palpite");
@@ -74,6 +76,10 @@ export async function setMatchResult(
     .eq("id", matchId);
   if (error) return { ok: false, error: "Não foi possível salvar o resultado" };
 
+  await logActivity(null, result === null ? "match.result.clear" : "match.result.set", {
+    match_id: matchId,
+    result,
+  });
   revalidatePath("/");
   revalidatePath("/grupos");
   revalidatePath("/tabela");
@@ -114,6 +120,11 @@ export async function setMatchScore(
   const { error } = await guard.supabase.from("matches").update(update).eq("id", matchId);
   if (error) return { ok: false, error: "Não foi possível salvar o placar" };
 
+  await logActivity(null, "match.score.set", {
+    match_id: matchId,
+    score_a: scoreA,
+    score_b: scoreB,
+  });
   revalidatePath("/");
   revalidatePath("/grupos");
   revalidatePath("/tabela");
@@ -145,6 +156,7 @@ export async function clearPicksOfUser(
     return { ok: false, error: "Não foi possível apagar os palpites" };
   }
   console.warn(`[admin-reset] clearPicksOfUser host=${guard.user.id} target=${userId} deleted=${count}`);
+  await logActivity(userId, "admin.clear_picks_user", { deleted: count });
 
   revalidatePath("/ranking");
   revalidatePath("/admin");
@@ -167,6 +179,7 @@ export async function clearAllPicks(confirmation: string): Promise<ActionResult>
     return { ok: false, error: "Não foi possível apagar todos os palpites" };
   }
   console.warn(`[admin-reset] clearAllPicks host=${guard.user.id} deleted=${count}`);
+  await logActivity(null, "admin.clear_all_picks", { deleted: count });
 
   revalidatePath("/ranking");
   revalidatePath("/admin");
@@ -188,6 +201,7 @@ export async function clearAllResults(confirmation: string): Promise<ActionResul
     return { ok: false, error: "Não foi possível apagar os resultados" };
   }
   console.warn(`[admin-reset] clearAllResults host=${guard.user.id} updated=${count}`);
+  await logActivity(null, "admin.clear_all_results", { updated: count });
 
   revalidatePath("/");
   revalidatePath("/grupos");
