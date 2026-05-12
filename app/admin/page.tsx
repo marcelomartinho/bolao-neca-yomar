@@ -27,7 +27,6 @@ export default async function AdminPage() {
   if (!profile?.host) {
     return (
       <main className="paper-bg flex min-h-screen flex-col text-ink">
-        <TriRule height={3} />
         <PageHeader pageLabel="Pág. 6 — Administração" subtitle="Acesso restrito" />
         <div className="flex flex-1 items-center justify-center px-4 md:px-9">
           <div className="border-2 border-dashed border-ink bg-white/60 p-8 text-center max-w-md">
@@ -69,7 +68,6 @@ export default async function AdminPage() {
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
-      <TriRule height={3} />
       <PageHeader pageLabel="Pág. 6 — Administração" subtitle="Configuração & resultados" />
       <div className="border-b border-line px-4 py-5 md:px-9">
         <DeadlineEditor initialDeadline={config.picks_deadline} />

@@ -24,7 +24,6 @@ export default async function TabelaPage() {
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
-      <TriRule height={3} />
       <PageHeader
         pageLabel="Pág. 4 — A tabela completa"
         subtitle={`72 jogos · ${totalResolved} resolvido${totalResolved === 1 ? "" : "s"}`}

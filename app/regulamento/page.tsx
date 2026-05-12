@@ -42,7 +42,6 @@ const REGRAS: Array<[string, string]> = [
 export default function RegulamentoPage() {
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
-      <TriRule height={3} />
       <PageHeader pageLabel="Pág. 6 — Regulamento oficial" subtitle="Letras miúdas, regras curtas" />
 
       <div className="flex flex-wrap items-end gap-3 border-b border-line px-4 pb-3 pt-4 md:gap-5 md:px-9 md:pt-6">

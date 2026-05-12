@@ -46,7 +46,6 @@ export default async function PerfilPage({ params }: Props) {
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
-      <TriRule height={3} />
       <PageHeader
         pageLabel={`Pág. 5 — Cartela de ${profile.name}`}
         subtitle="Boletim do participante"

@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { TriRule } from "@/components/boletim/TriRule";
-import { BBrand } from "@/components/boletim/BBrand";
+import { PageHeader } from "@/components/boletim/PageHeader";
 import { addKid } from "../actions";
 
 type SearchParams = Promise<{ error?: string }>;
@@ -9,14 +8,7 @@ export default async function NovoFilhoPage({ searchParams }: { searchParams: Se
   const sp = await searchParams;
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
-      <TriRule height={4} />
-      <header className="flex items-center justify-between border-b-2 border-ink px-5 py-2.5">
-        <Link href="/m/familia" className="font-cond text-xs font-bold uppercase tracking-wider">
-          ← Voltar
-        </Link>
-        <BBrand size={14} />
-        <span className="tag">Novo filho</span>
-      </header>
+      <PageHeader pageLabel="Família" subtitle="Adicionar filho(a)" />
 
       <div className="flex-1 px-6 py-7">
         <h1 className="font-cond text-3xl font-extrabold uppercase leading-none">

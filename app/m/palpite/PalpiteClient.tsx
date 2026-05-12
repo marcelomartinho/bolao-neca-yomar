@@ -140,14 +140,89 @@ export function PalpiteClient({
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
-      <div className="flex items-center justify-between border-b-2 border-ink px-5 py-2.5">
-        <BBrand size={16} />
-        <span className="tag">Cartela</span>
-      </div>
-      <TriRule height={2} />
-      <DeadlineBanner deadlineIso={deadlineIso ?? null} />
+      {/* Sticky stack: brand + countdown + profile selector + progress counter */}
+      <div className="sticky top-0 z-30 bg-paper/95 backdrop-blur md:top-[46px]">
+        <div className="flex items-center justify-between border-b-2 border-ink px-5 py-2.5">
+          <BBrand size={16} />
+          <span className="tag">Cartela</span>
+        </div>
+        <TriRule height={2} />
+        <DeadlineBanner deadlineIso={deadlineIso ?? null} />
 
-      {/* Export card (visible above the fold) */}
+        {profiles.length > 1 && (
+          <div className="flex flex-wrap items-center gap-2 border-b border-line bg-paper2/40 px-4 py-2">
+            <span className="tag">Palpitando como</span>
+            {profiles.map((p) => {
+              const sel = p.id === optimisticActiveId;
+              const isPendingThis = switching && sel;
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => switchActive(p.id)}
+                  disabled={switching}
+                  className="font-cond inline-flex items-center gap-1.5 rounded-sm border-[1.5px] px-2.5 py-1 text-xs font-bold uppercase tracking-wider transition-opacity"
+                  style={{
+                    borderColor: sel ? "#0b6b3a" : "#d5dde7",
+                    background: sel ? "#0b6b3a" : "transparent",
+                    color: sel ? "#fbfaf4" : "#0b2c5c",
+                    opacity: switching && !sel ? 0.4 : 1,
+                  }}
+                >
+                  <Avatar
+                    name={p.name}
+                    initials={p.initials}
+                    emoji={p.emoji}
+                    size={20}
+                  />
+                  {p.name}
+                  {p.is_kid && <span className="text-[10px] opacity-75">🧒</span>}
+                  {isPendingThis && <Spinner />}
+                </button>
+              );
+            })}
+            <Link
+              href="/m/familia"
+              className="font-mono ml-auto text-[10px] uppercase tracking-[0.18em] text-ink2 underline-offset-4 hover:underline"
+            >
+              Gerenciar família →
+            </Link>
+          </div>
+        )}
+
+        <div className="border-b border-line px-5 py-2.5">
+          <div className="flex items-baseline justify-between gap-3">
+            <div className="min-w-0">
+              <div className="tag truncate">Sessão de {email}</div>
+              <h2 className="font-cond mt-0.5 text-xl font-extrabold uppercase leading-none tracking-tight md:text-2xl">
+                Próximos <span className="text-grass">{matches.length}</span>{" "}
+                <span className="font-normal text-ink2">jogos</span>
+              </h2>
+            </div>
+            <div className="shrink-0 text-right">
+              <div className="tag">Palpitados</div>
+              <div
+                className={`font-cond text-2xl font-extrabold leading-none ${
+                  filled === matches.length ? "text-grass" : "text-ink"
+                }`}
+              >
+                {filled}
+                <span className="font-semibold text-ink2">/{matches.length}</span>
+              </div>
+            </div>
+          </div>
+          <div className="mt-2 flex gap-1">
+            {matches.map((m) => (
+              <div
+                key={m.id}
+                className="h-1 flex-1 rounded-sm"
+                style={{ background: picks[m.id] ? "#0b6b3a" : "#d5dde7" }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Export card — abaixo do sticky, rola com a lista */}
       <div className="border-b border-line bg-paper2/30 px-4 py-3 md:px-9">
         <div className="relative flex flex-wrap items-center gap-3 border-2 border-ink bg-white/60 px-3 py-3 md:px-4">
           <TriRule
@@ -176,78 +251,6 @@ export function PalpiteClient({
           >
             <Icon.Download s={16} /> Excel
           </a>
-        </div>
-      </div>
-
-      {profiles.length > 1 && (
-        <div className="flex flex-wrap items-center gap-2 border-b border-line bg-paper2/40 px-4 py-2">
-          <span className="tag">Palpitando como</span>
-          {profiles.map((p) => {
-            const sel = p.id === optimisticActiveId;
-            const isPendingThis = switching && sel;
-            return (
-              <button
-                key={p.id}
-                onClick={() => switchActive(p.id)}
-                disabled={switching}
-                className="font-cond inline-flex items-center gap-1.5 rounded-sm border-[1.5px] px-2.5 py-1 text-xs font-bold uppercase tracking-wider transition-opacity"
-                style={{
-                  borderColor: sel ? "#0b6b3a" : "#d5dde7",
-                  background: sel ? "#0b6b3a" : "transparent",
-                  color: sel ? "#fbfaf4" : "#0b2c5c",
-                  opacity: switching && !sel ? 0.4 : 1,
-                }}
-              >
-                <Avatar
-                  name={p.name}
-                  initials={p.initials}
-                  emoji={p.emoji}
-                  size={20}
-                />
-                {p.name}
-                {p.is_kid && <span className="text-[10px] opacity-75">🧒</span>}
-                {isPendingThis && <Spinner />}
-              </button>
-            );
-          })}
-          <Link
-            href="/m/familia"
-            className="font-mono ml-auto text-[10px] uppercase tracking-[0.18em] text-ink2 underline-offset-4 hover:underline"
-          >
-            Gerenciar família →
-          </Link>
-        </div>
-      )}
-
-      <div className="border-b border-line px-5 py-3.5">
-        <div className="flex items-baseline justify-between">
-          <div>
-            <div className="tag">Sessão de {email}</div>
-            <h2 className="font-cond mt-0.5 text-3xl font-extrabold uppercase leading-[0.95] tracking-tight">
-              Próximos <span className="text-grass">{matches.length}</span>{" "}
-              <span className="font-normal text-ink2">jogos</span>
-            </h2>
-          </div>
-          <div className="text-right">
-            <div className="tag">Palpitados</div>
-            <div
-              className={`font-cond text-[28px] font-extrabold leading-none ${
-                filled === matches.length ? "text-grass" : "text-ink"
-              }`}
-            >
-              {filled}
-              <span className="font-semibold text-ink2">/{matches.length}</span>
-            </div>
-          </div>
-        </div>
-        <div className="mt-3 flex gap-1">
-          {matches.map((m) => (
-            <div
-              key={m.id}
-              className="h-1 flex-1 rounded-sm"
-              style={{ background: picks[m.id] ? "#0b6b3a" : "#d5dde7" }}
-            />
-          ))}
         </div>
       </div>
 

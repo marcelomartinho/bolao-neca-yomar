@@ -24,8 +24,10 @@ export default async function FrontPage() {
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
-      <TriRule height={4} />
-      <DeadlineBanner deadlineIso={config.picks_deadline} />
+      <div className="sticky top-0 z-30 border-b border-line bg-paper/95 backdrop-blur md:top-[46px]">
+        <TriRule height={4} />
+        <DeadlineBanner deadlineIso={config.picks_deadline} />
+      </div>
 
       {/* Masthead */}
       <div className="flex flex-wrap items-end justify-between gap-2 border-b-2 border-ink px-4 pb-3 pt-4 md:px-9 md:pb-3.5 md:pt-5">

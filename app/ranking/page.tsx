@@ -26,7 +26,6 @@ export default async function RankingPage() {
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
-      <TriRule height={3} />
       <PageHeader pageLabel={`Boletim do dia · ${formatToday()}`} subtitle="Pág. 3 — ranking geral" />
 
       <div className="flex flex-wrap items-center gap-2 border-b border-line px-4 py-3 md:gap-3.5 md:px-9 md:py-4">

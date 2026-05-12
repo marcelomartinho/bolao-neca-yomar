@@ -2,8 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { fetchManagedProfiles } from "@/lib/active-profile";
-import { TriRule } from "@/components/boletim/TriRule";
-import { BBrand } from "@/components/boletim/BBrand";
+import { PageHeader } from "@/components/boletim/PageHeader";
 import { Avatar } from "@/components/Avatar";
 import { updateProfile } from "./actions";
 
@@ -31,14 +30,7 @@ export default async function PerfilEditPage({ searchParams }: { searchParams: S
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
-      <TriRule height={4} />
-      <header className="flex items-center justify-between border-b-2 border-ink px-5 py-2.5">
-        <Link href="/m/familia" className="font-cond text-xs font-bold uppercase tracking-wider">
-          ← Família
-        </Link>
-        <BBrand size={14} />
-        <span className="tag">Perfil</span>
-      </header>
+      <PageHeader pageLabel="Família" subtitle="Editar perfil" />
 
       {managed.length > 1 && (
         <div className="flex flex-wrap items-center gap-2 border-b border-line bg-paper2/40 px-4 py-2">
