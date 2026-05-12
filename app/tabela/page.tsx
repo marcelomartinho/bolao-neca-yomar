@@ -3,33 +3,31 @@ import { TriRule } from "@/components/boletim/TriRule";
 import { PageHeader } from "@/components/boletim/PageHeader";
 import { PageFooter } from "@/components/boletim/PageFooter";
 import { Flag } from "@/components/Flag";
-import {
-  MATCHES,
-  TEAMS,
-  dateKeyBRT,
-  formatBRT,
-  formatDayBRT,
-} from "@/lib/static-data";
+import { TEAMS, type TeamCode, dateKeyBRT, formatBRT, formatDayBRT } from "@/lib/static-data";
+import { fetchMatches } from "@/lib/db";
 
-export const revalidate = 300;
+export const revalidate = 60;
 export const metadata: Metadata = { title: "Tabela completa" };
 
-export default function TabelaPage() {
-  const byDay = new Map<string, typeof MATCHES>();
-  for (const m of MATCHES) {
-    const k = dateKeyBRT(m.startsAt);
+export default async function TabelaPage() {
+  const matches = await fetchMatches();
+
+  const byDay = new Map<string, typeof matches>();
+  for (const m of matches) {
+    const k = dateKeyBRT(new Date(m.starts_at));
     const arr = byDay.get(k) ?? [];
     arr.push(m);
     byDay.set(k, arr);
   }
   const days = [...byDay.keys()].sort();
+  const totalResolved = matches.filter((m) => m.result !== null).length;
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
       <TriRule height={3} />
       <PageHeader
         pageLabel="Pág. 4 — A tabela completa"
-        subtitle="72 jogos · horários em Brasília"
+        subtitle={`72 jogos · ${totalResolved} resolvido${totalResolved === 1 ? "" : "s"}`}
       />
 
       <div className="flex flex-wrap items-center gap-1.5 border-b border-line px-4 py-2.5 md:gap-2 md:px-9 md:py-3">
@@ -69,40 +67,63 @@ export default function TabelaPage() {
                 </span>
               </div>
               <div>
-                {list.map((m, i) => (
-                  <div
-                    key={m.id}
-                    className="grid items-center gap-2 px-4 py-1.5 [grid-template-columns:40px_44px_1.3fr_22px_1.3fr] md:px-7 md:[grid-template-columns:48px_50px_1.4fr_32px_1.4fr_88px]"
-                    style={{
-                      borderBottom: i === list.length - 1 ? "none" : "1px dashed #d5dde7",
-                    }}
-                  >
-                    <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-ink2 md:text-[10px] md:tracking-[0.1em]">
-                      nº {String(m.id).padStart(2, "0")}
-                    </span>
-                    <span className="font-mono text-[10px] text-ink2 md:text-[11px]">
-                      {formatBRT(m.startsAt)}
-                    </span>
-                    <div className="flex min-w-0 items-center justify-end gap-1.5">
-                      <span className="font-cond truncate text-xs font-semibold md:text-sm">
-                        {TEAMS[m.a].name}
+                {list.map((m, i) => {
+                  const tA = TEAMS[m.team_a as TeamCode];
+                  const tB = TEAMS[m.team_b as TeamCode];
+                  const score = m as unknown as { score_a: number | null; score_b: number | null };
+                  const hasScore = score.score_a != null && score.score_b != null;
+                  return (
+                    <div
+                      key={m.id}
+                      className="grid items-center gap-2 px-4 py-1.5 [grid-template-columns:40px_44px_1.3fr_46px_1.3fr] md:px-7 md:[grid-template-columns:48px_50px_1.4fr_56px_1.4fr_88px]"
+                      style={{
+                        borderBottom: i === list.length - 1 ? "none" : "1px dashed #d5dde7",
+                      }}
+                    >
+                      <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-ink2 md:text-[10px] md:tracking-[0.1em]">
+                        nº {String(m.id).padStart(2, "0")}
                       </span>
-                      <Flag code={m.a} name={TEAMS[m.a].name} size="sm" />
-                    </div>
-                    <span className="font-cond text-center text-xs italic text-ink2 md:text-base">
-                      vs
-                    </span>
-                    <div className="flex min-w-0 items-center gap-1.5">
-                      <Flag code={m.b} name={TEAMS[m.b].name} size="sm" />
-                      <span className="font-cond truncate text-xs font-semibold md:text-sm">
-                        {TEAMS[m.b].name}
+                      <span className="font-mono text-[10px] text-ink2 md:text-[11px]">
+                        {formatBRT(new Date(m.starts_at))}
+                      </span>
+                      <div className="flex min-w-0 items-center justify-end gap-1.5">
+                        <span
+                          className="font-cond truncate text-xs font-semibold md:text-sm"
+                          style={{ fontWeight: m.result === "1" ? 800 : 500 }}
+                        >
+                          {tA.name}
+                        </span>
+                        <Flag code={m.team_a as TeamCode} name={tA.name} size="sm" />
+                      </div>
+                      <div className="flex items-center justify-center">
+                        {hasScore ? (
+                          <span
+                            className="font-cond inline-flex items-center gap-0.5 rounded-sm bg-grass px-1.5 py-0.5 text-[11px] font-extrabold tabular-nums text-paper md:text-sm"
+                            title="Placar oficial · 90 min"
+                          >
+                            {score.score_a} <span className="opacity-70">×</span> {score.score_b}
+                          </span>
+                        ) : (
+                          <span className="font-cond text-center text-xs italic text-ink2 md:text-base">
+                            vs
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex min-w-0 items-center gap-1.5">
+                        <Flag code={m.team_b as TeamCode} name={tB.name} size="sm" />
+                        <span
+                          className="font-cond truncate text-xs font-semibold md:text-sm"
+                          style={{ fontWeight: m.result === "2" ? 800 : 500 }}
+                        >
+                          {tB.name}
+                        </span>
+                      </div>
+                      <span className="hidden text-right font-mono text-[10px] text-ink2 md:inline">
+                        Grp {m.group_letter}{m.city ? ` · ${m.city.split(" ")[0]}` : ""}
                       </span>
                     </div>
-                    <span className="hidden text-right font-mono text-[10px] text-ink2 md:inline">
-                      Grp {m.group} · {m.city.split(" ")[0]}
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           );
@@ -111,7 +132,7 @@ export default function TabelaPage() {
 
       <PageFooter
         left="Pág. 4 de 6"
-        center="72 jogos · 16 dias · 11 jun → 26 jun 2026"
+        center="placar do tempo normal (90 min) · prorrogação não conta"
         right="todos os horários em BRT"
       />
     </main>
