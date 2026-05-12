@@ -31,7 +31,7 @@ export default async function LoginPage({
         <p className="tag">Boletim periódico da família</p>
         <h1 className="font-cond mt-1 text-4xl font-extrabold uppercase leading-[0.95]">
           Bem-vindo de volta<br />
-          <span className="text-grass italic font-normal">à mesa do bolão.</span>
+          <span className="text-grass italic font-normal">ao Bolão Yomar e Família.</span>
         </h1>
         <p className="text-ink2 mt-4 text-sm leading-relaxed">
           Digite seu e-mail. Mandamos um link mágico. Sem senha, sem app — abre e palpita.

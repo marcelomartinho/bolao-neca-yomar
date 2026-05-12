@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Bolão Yomar e Família — Copa 2026",
     short_name: "Bolão",
-    description: "Boletim do bolão familiar da Copa do Mundo de 2026.",
+    description: "Boletim do Bolão Yomar e Família — Copa do Mundo 2026.",
     start_url: "/",
     display: "standalone",
     background_color: "#fbfaf4",

@@ -91,7 +91,7 @@ export default async function CartelaPdfPage() {
       <div className="pdf-header flex items-end justify-between border-b-2 border-ink pb-3">
         <div>
           <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-grass">
-            Boletim do bolão · cartela impressa
+            Boletim Yomar e Família · cartela impressa
           </div>
           <h1 className="font-cond mt-1 text-3xl font-extrabold uppercase leading-[0.95] tracking-tight md:text-[40px]">
             {profile?.name ?? "Participante"}{" "}

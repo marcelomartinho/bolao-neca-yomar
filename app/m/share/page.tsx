@@ -115,7 +115,7 @@ export default async function SharePage() {
 
         <ShareActions
           shareUrl="https://bolao-neca-yomar.vercel.app"
-          shareText={`Já carimbei minha cartela do bolão da família — Copa 2026. Vem comigo: `}
+          shareText={`Já carimbei minha cartela no Bolão Yomar e Família — Copa 2026. Vem comigo: `}
         />
       </div>
     </main>

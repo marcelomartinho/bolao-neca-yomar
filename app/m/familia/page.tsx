@@ -27,7 +27,7 @@ export default async function FamiliaPage() {
       <div className="flex-1 px-5 py-6">
         <h1 className="font-cond text-3xl font-extrabold uppercase leading-none">
           Sua família<br />
-          <span className="italic font-normal text-grass">no bolão.</span>
+          <span className="italic font-normal text-grass">no Bolão Yomar e Família.</span>
         </h1>
         <p className="text-ink2 mt-3 text-sm">
           Cadastre filhos pra palpitar pela cartela deles. Cada um tem ranking próprio.

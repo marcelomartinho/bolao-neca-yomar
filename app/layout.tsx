@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     template: "%s · Bolão Yomar e Família",
   },
   description:
-    "Boletim do bolão familiar da Copa do Mundo 2026. 48 seleções, 12 grupos, 72 jogos.",
+    "Boletim do Bolão Yomar e Família — Copa do Mundo 2026. 48 seleções, 12 grupos, 72 jogos.",
   applicationName: "Bolão Yomar e Família",
   authors: [{ name: "Yomar e Família" }],
   keywords: ["bolão", "copa do mundo 2026", "fifa", "família", "palpite"],
@@ -46,12 +46,12 @@ export const metadata: Metadata = {
     siteName: "Bolão Yomar e Família",
     title: "Bolão Yomar e Família — Copa 2026",
     description:
-      "Boletim do bolão familiar da Copa do Mundo 2026. Vem palpitar com a gente.",
+      "Boletim do Bolão Yomar e Família — Copa do Mundo 2026. Vem palpitar com a gente.",
   },
   twitter: {
     card: "summary",
     title: "Bolão Yomar e Família — Copa 2026",
-    description: "Boletim do bolão familiar da Copa do Mundo 2026.",
+    description: "Boletim do Bolão Yomar e Família — Copa do Mundo 2026.",
   },
   robots: { index: true, follow: true },
 };

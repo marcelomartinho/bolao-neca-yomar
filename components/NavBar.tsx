@@ -100,7 +100,7 @@ export function NavBar({ isAuthed, isAdmin }: Props) {
           onClick={() => go("/" as Route)}
           className="font-cond text-sm font-bold uppercase tracking-wider text-ink"
         >
-          O Bolão
+          Yomar e Família
         </button>
         <ul className="flex items-center gap-5">
           {DESKTOP.map((it) => {

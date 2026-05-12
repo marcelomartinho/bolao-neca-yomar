@@ -13,7 +13,7 @@ export function BBrand({ size = 22 }: Props) {
           className="font-cond text-ink font-bold uppercase tracking-wider"
           style={{ fontSize: size }}
         >
-          Boletim do Bolão
+          Bolão Yomar e Família
         </span>
         <span className="text-gold font-mono mt-[3px] text-[9.5px] uppercase tracking-[0.18em]">
           Yomar e Família · Edição 11

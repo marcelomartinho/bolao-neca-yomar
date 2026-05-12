@@ -35,8 +35,9 @@ export default async function FrontPage() {
           <div className="font-mono text-[9px] uppercase tracking-[0.18em] text-grass md:text-[10px] md:tracking-[0.2em]">
             Boletim periódico da família
           </div>
-          <h1 className="font-cond mt-0.5 text-[42px] font-bold uppercase leading-[0.9] md:text-[60px]">
-            O Bolão
+          <h1 className="font-cond mt-0.5 text-[32px] font-extrabold uppercase leading-[0.92] tracking-tight md:text-[52px]">
+            Bolão<br />
+            <span className="text-grass">Yomar e Família</span>
           </h1>
         </div>
         <div className="text-right">
@@ -65,15 +66,15 @@ export default async function FrontPage() {
             <Stamp color="#0b2c5c" rot={-1}>Participação gratuita</Stamp>
           </div>
           <h2 className="font-cond mt-4 text-3xl font-extrabold uppercase leading-[0.95] tracking-tight md:mt-5 md:text-[56px] md:leading-[0.92]">
-            Volta o bolão da casa{" "}
+            A tradição volta{" "}
             <span className="italic font-normal text-grass">e desta vez</span>{" "}
             vale <span className="italic text-gold">quinze mil</span>.
           </h2>
           <p className="mt-4 max-w-[540px] text-sm leading-relaxed md:mt-5 md:text-[14.5px]">
             Foram quatro anos esperando. A Copa volta — agora em três países e com 48 seleções —
-            e o bolão da família volta junto. Em cada jogo da fase de grupos você{" "}
-            <strong>escolhe o vencedor</strong> (ou marca empate). Quem somar mais acertos, leva.
-            Empate, divide.
+            e o <strong>Bolão Yomar e Família</strong> volta junto. Em cada jogo da fase de grupos
+            você <strong>escolhe o vencedor</strong> (ou marca empate). Quem somar mais acertos,
+            leva. Empate, divide.
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-2.5 md:mt-auto md:gap-3 md:pt-5">
             {!isAuthed ? (
