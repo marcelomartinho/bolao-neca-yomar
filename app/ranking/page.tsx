@@ -41,16 +41,19 @@ export default async function RankingPage() {
       </div>
 
       <h2 className="font-cond m-0 break-words px-4 pb-1.5 pt-3 text-2xl font-extrabold uppercase leading-[1.05] tracking-tight md:px-9 md:pt-4 md:text-[44px] md:leading-none">
-        {top3[0]?.name ?? "Ainda sem palpiteiros"}{" "}
-        <span className="italic font-normal">—</span>
-        {top3[1] ? (
+        {top3.length === 0 ? (
+          <span className="text-ink2">Ranking ainda em branco.</span>
+        ) : top3.length === 1 ? (
           <>
-            {" "}
-            com{" "}
-            <span className="text-grass">{top3[1].name}</span> colada.
+            {top3[0].name}{" "}
+            <span className="italic font-normal text-ink2">na liderança.</span>
           </>
         ) : (
-          <span className="text-ink2"> abra a cartela.</span>
+          <>
+            {top3[0].name}{" "}
+            <span className="italic font-normal">lidera —</span>{" "}
+            <span className="text-grass">{top3[1].name}</span> logo atrás.
+          </>
         )}
       </h2>
 
