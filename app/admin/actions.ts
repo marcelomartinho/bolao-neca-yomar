@@ -74,8 +74,10 @@ export async function setMatchResult(
     .eq("id", matchId);
   if (error) return { ok: false, error: "Não foi possível salvar o resultado" };
 
-  revalidatePath("/ranking");
+  revalidatePath("/");
+  revalidatePath("/grupos");
   revalidatePath("/tabela");
+  revalidatePath("/ranking");
   revalidatePath("/admin");
   return { ok: true };
 }
@@ -112,8 +114,10 @@ export async function setMatchScore(
   const { error } = await guard.supabase.from("matches").update(update).eq("id", matchId);
   if (error) return { ok: false, error: "Não foi possível salvar o placar" };
 
-  revalidatePath("/ranking");
+  revalidatePath("/");
+  revalidatePath("/grupos");
   revalidatePath("/tabela");
+  revalidatePath("/ranking");
   revalidatePath("/admin");
   revalidatePath(`/m/jogo/${matchId}`);
   return { ok: true };
