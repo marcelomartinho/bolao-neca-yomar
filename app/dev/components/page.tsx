@@ -52,7 +52,7 @@ export default function DevComponentsPage() {
         </Section>
 
         <Section title="Avatar">
-          <Avatar name="Neca" />
+          <Avatar name="Nilcynéa" initials="NI" />
           <Avatar name="Yomar" />
           <Avatar name="Belle" size={56} />
           <Avatar name="Marcelo" size={48} />

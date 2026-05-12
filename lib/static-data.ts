@@ -165,7 +165,7 @@ export type Participant = {
 };
 
 export const PARTICIPANTS: Participant[] = [
-  { id: "nilcynea", name: "Neca", initials: "N", host: true, score: 0, pos: 1 },
+  { id: "nilcynea", name: "Nilcynéa", initials: "NI", host: false, score: 0, pos: 1 },
   { id: "yomar", name: "Yomar", initials: "Y", host: true, score: 0, pos: 1 },
   { id: "marcelo", name: "Marcelo", initials: "M", score: 0, pos: 1 },
   { id: "isabelle", name: "Belle", initials: "B", score: 0, pos: 1 },
