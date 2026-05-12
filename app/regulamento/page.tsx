@@ -7,25 +7,31 @@ import { PageFooter } from "@/components/boletim/PageFooter";
 export const metadata: Metadata = { title: "Regulamento" };
 
 const REGRAS: Array<[string, string]> = [
-  ["O bolão", "Aposta sobre os 72 jogos da fase de grupos da Copa de 2026. Cada jogo vale 1 ponto."],
-  ["Inscrição", "Gratuita. Aberta entre 1º de maio e o apito inicial do jogo de abertura."],
+  ["O bolão", "Aposta sobre os 72 jogos da fase de grupos da Copa de 2026. Cada acerto vale 1 ponto."],
+  [
+    "Inscrição",
+    "Gratuita. A organização pré-cadastra os participantes pela lista da família — quem está na lista entra com o próprio e-mail (link mágico, sem senha).",
+  ],
   [
     "Palpites",
-    "Para cada jogo, marque <strong>1</strong> (vence o primeiro), <strong>X</strong> (empate) ou <strong>2</strong> (vence o segundo).",
+    "Em cada jogo, escolha o vencedor clicando no time mandante ou no visitante. Para empate, clique em <strong>X</strong>. Pais palpitam pelos filhos cadastrados como perfil próprio.",
   ],
-  ["Prazos", "Cada palpite pode ser editado até 30 minutos antes do início da partida."],
-  ["Pontuação", "1 ponto por acerto. Sem multiplicadores, sem zebras, sem complicação."],
+  [
+    "Prazos",
+    "Todos os palpites devem ser carimbados até o <strong>prazo único</strong> definido pela organização (visível na capa e na cartela). Depois disso, ninguém edita mais.",
+  ],
+  ["Pontuação", "1 ponto por acerto de 1 / X / 2. Sem multiplicadores, sem zebras, sem complicação. Resultado considerado é o do tempo normal (90 min)."],
   [
     "Empate",
     "Em caso de empate no total de acertos, o prêmio é rateado igualmente entre os empatados.",
   ],
   [
     "Premiação",
-    "1º lugar leva R$ 10.000,00. 2º lugar leva R$ 5.000,00. Pago em até 7 dias após o último jogo.",
+    "1º lugar leva R$ 10.000,00. 2º lugar leva R$ 5.000,00.",
   ],
   [
-    "Desistência",
-    "Quem não palpitar em 2 rodadas seguidas é considerado fora. Pode pedir pra voltar; depende do humor da organização.",
+    "Cartela em branco",
+    "Quem não palpitar até o prazo fica com cartela em branco — soma zero ponto. Sem segunda chance.",
   ],
   [
     "Discussão",
@@ -94,6 +100,7 @@ export default function RegulamentoPage() {
             <ul className="m-0 mt-2 flex list-none flex-col gap-1.5 p-0 text-xs leading-snug">
               <li>· Jogo cancelado vira anulado pra todo mundo.</li>
               <li>· Prorrogação e pênaltis não contam — só os 90 min.</li>
+              <li>· Cada palpite fica salvo automaticamente ao clicar.</li>
             </ul>
           </div>
 
