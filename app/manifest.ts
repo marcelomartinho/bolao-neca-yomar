@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Bolão Neca & Yomar — Copa 2026",
+    name: "Bolão Yomar e Família — Copa 2026",
     short_name: "Bolão",
     description: "Boletim do bolão familiar da Copa do Mundo de 2026.",
     start_url: "/",

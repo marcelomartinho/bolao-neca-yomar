@@ -18,7 +18,7 @@ export function ShareActions({ shareUrl, shareText }: Props) {
     }
     try {
       await navigator.share({
-        title: "Bolão Neca & Yomar — Copa 2026",
+        title: "Bolão Yomar e Família — Copa 2026",
         text: shareText,
         url: shareUrl,
       });

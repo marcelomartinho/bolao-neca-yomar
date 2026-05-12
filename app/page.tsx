@@ -51,9 +51,9 @@ export default async function FrontPage() {
 
       {/* Sub-strip */}
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 border-b border-line px-4 py-1.5 font-mono text-[9px] uppercase tracking-[0.1em] text-ink2 md:px-9 md:text-[11px] md:tracking-[0.12em]">
-        <span>Distribuído gratuitamente</span>
+        <span>Participação gratuita</span>
         <span className="hidden sm:inline">11 jun → 26 jun · 72 jogos</span>
-        <span>Org.: Neca &amp; Yomar</span>
+        <span>Org.: Yomar e Família</span>
       </div>
 
       <div className="grid flex-1 min-h-0 grid-cols-1 md:[grid-template-columns:1.4fr_1fr]">
@@ -62,6 +62,7 @@ export default async function FrontPage() {
           <div className="flex flex-wrap items-center gap-2 md:gap-3.5">
             <Stamp color="#0b6b3a" rot={-3}>Aberto</Stamp>
             <Stamp color="#c79410" rot={2}>Premiação dobrou</Stamp>
+            <Stamp color="#0b2c5c" rot={-1}>Participação gratuita</Stamp>
           </div>
           <h2 className="font-cond mt-4 text-3xl font-extrabold uppercase leading-[0.95] tracking-tight md:mt-5 md:text-[56px] md:leading-[0.92]">
             Volta o bolão da casa{" "}

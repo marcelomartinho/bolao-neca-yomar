@@ -35,7 +35,7 @@ const REGRAS: Array<[string, string]> = [
   ],
   [
     "Discussão",
-    "Toda contestação é decidida em mesa, com Neca e Yomar. Palavra final é da organização.",
+    "Toda contestação é decidida em mesa, com Yomar e a organização. Palavra final é da organização.",
   ],
 ];
 
@@ -54,7 +54,7 @@ export default function RegulamentoPage() {
         <div className="text-right">
           <Stamp color="#c79410" rot={4}>Aprovado</Stamp>
           <div className="mt-1.5 font-mono text-[9px] uppercase tracking-[0.14em] text-ink2 md:text-[10px] md:tracking-[0.16em]">
-            Org.: Neca &amp; Yomar
+            Org.: Yomar e Família
           </div>
         </div>
       </div>

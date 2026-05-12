@@ -108,7 +108,7 @@ export default async function SharePage() {
             )}
           </div>
           <div className="mt-3 flex justify-between font-mono text-[9.5px] uppercase tracking-[0.14em] text-ink2">
-            <span>Bolão Neca &amp; Yomar</span>
+            <span>Bolão Yomar e Família</span>
             <span>Copa 2026</span>
           </div>
         </div>

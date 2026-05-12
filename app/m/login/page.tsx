@@ -65,7 +65,7 @@ export default async function LoginPage({
       </div>
 
       <footer className="border-t-2 border-ink px-5 py-3 text-center">
-        <span className="tag">Bolão Neca &amp; Yomar · Copa 2026</span>
+        <span className="tag">Bolão Yomar e Família · Copa 2026</span>
       </footer>
     </main>
   );

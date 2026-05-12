@@ -16,7 +16,7 @@ export function BBrand({ size = 22 }: Props) {
           Boletim do Bolão
         </span>
         <span className="text-gold font-mono mt-[3px] text-[9.5px] uppercase tracking-[0.18em]">
-          Neca &amp; Yomar · Edição 11
+          Yomar e Família · Edição 11
         </span>
       </div>
     </div>

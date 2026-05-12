@@ -31,26 +31,26 @@ const SITE_URL =
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Bolão Neca & Yomar — Copa 2026",
-    template: "%s · Bolão Neca & Yomar",
+    default: "Bolão Yomar e Família — Copa 2026",
+    template: "%s · Bolão Yomar e Família",
   },
   description:
     "Boletim do bolão familiar da Copa do Mundo 2026. 48 seleções, 12 grupos, 72 jogos.",
-  applicationName: "Bolão Neca & Yomar",
-  authors: [{ name: "Neca & Yomar" }],
+  applicationName: "Bolão Yomar e Família",
+  authors: [{ name: "Yomar e Família" }],
   keywords: ["bolão", "copa do mundo 2026", "fifa", "família", "palpite"],
   openGraph: {
     type: "website",
     locale: "pt_BR",
     url: SITE_URL,
-    siteName: "Bolão Neca & Yomar",
-    title: "Bolão Neca & Yomar — Copa 2026",
+    siteName: "Bolão Yomar e Família",
+    title: "Bolão Yomar e Família — Copa 2026",
     description:
       "Boletim do bolão familiar da Copa do Mundo 2026. Vem palpitar com a gente.",
   },
   twitter: {
     card: "summary",
-    title: "Bolão Neca & Yomar — Copa 2026",
+    title: "Bolão Yomar e Família — Copa 2026",
     description: "Boletim do bolão familiar da Copa do Mundo 2026.",
   },
   robots: { index: true, follow: true },

@@ -56,7 +56,7 @@ export async function GET(request: NextRequest) {
 
   // Preamble — 3 linhas + linha em branco antes do cabeçalho dos dados
   const preamble: string[][] = [
-    [`Bolão Neca & Yomar — Copa 2026`],
+    [`Bolão Yomar e Família — Copa 2026`],
     [`Participante: ${profileName}`],
     [`Gerado em: ${generated}`],
     [`Palpitados: ${filled}/${total}`, `Pontos atuais: ${score}`],

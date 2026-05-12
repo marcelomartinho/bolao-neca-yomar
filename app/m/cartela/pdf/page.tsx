@@ -195,7 +195,7 @@ export default async function CartelaPdfPage() {
       </div>
 
       <div className="mt-6 border-t-2 border-ink pt-2 text-center font-mono text-[9px] uppercase tracking-[0.18em] text-ink2">
-        Bolão Neca &amp; Yomar · {profile?.name} · gerado em {generated}
+        Bolão Yomar e Família · {profile?.name} · gerado em {generated}
       </div>
     </main>
   );
