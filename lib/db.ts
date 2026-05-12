@@ -10,6 +10,8 @@ export type MatchRow = {
   starts_at: string;
   city: string | null;
   result: Pick | null;
+  score_a: number | null;
+  score_b: number | null;
 };
 
 export type PickRow = {
@@ -33,7 +35,7 @@ export async function fetchMatches(opts?: { fromId?: number; limit?: number }) {
   const supabase = await createSupabaseServerClient();
   let q = supabase
     .from("matches")
-    .select("id,group_letter,round,team_a,team_b,starts_at,city,result")
+    .select("id,group_letter,round,team_a,team_b,starts_at,city,result,score_a,score_b")
     .order("starts_at", { ascending: true })
     .order("id", { ascending: true });
   if (opts?.fromId) q = q.gte("id", opts.fromId);
@@ -48,7 +50,7 @@ export async function fetchOpenMatches(limit = 12) {
   const nowIso = new Date().toISOString();
   const { data, error } = await supabase
     .from("matches")
-    .select("id,group_letter,round,team_a,team_b,starts_at,city,result")
+    .select("id,group_letter,round,team_a,team_b,starts_at,city,result,score_a,score_b")
     .gte("starts_at", nowIso)
     .order("starts_at", { ascending: true })
     .limit(limit);
