@@ -154,6 +154,38 @@ export function PalpiteClient({
       <TriRule height={2} />
       <DeadlineBanner deadlineIso={deadlineIso ?? null} />
 
+      {/* Export card (visible above the fold) */}
+      <div className="border-b border-line bg-paper2/30 px-4 py-3 md:px-9">
+        <div className="relative flex flex-wrap items-center gap-3 border-2 border-ink bg-white/60 px-3 py-3 md:px-4">
+          <TriRule
+            height={3}
+            style={{ position: "absolute", top: -2, left: -2, right: -2, width: "auto" }}
+          />
+          <div className="flex flex-1 flex-col gap-0.5">
+            <span className="font-mono text-[9px] uppercase tracking-[0.18em] text-gold">
+              Exportar minha cartela
+            </span>
+            <span className="font-cond text-sm font-bold uppercase text-ink">
+              PDF pra imprimir · Excel pra conferir
+            </span>
+          </div>
+          <a
+            href="/m/cartela/pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-cond inline-flex min-h-[44px] items-center gap-2 rounded-sm border-2 border-grass bg-grass px-4 py-2 text-sm font-bold uppercase tracking-wider text-paper"
+          >
+            <Icon.Download s={16} /> PDF
+          </a>
+          <a
+            href="/m/cartela/csv"
+            className="font-cond inline-flex min-h-[44px] items-center gap-2 rounded-sm border-2 border-ink bg-transparent px-4 py-2 text-sm font-bold uppercase tracking-wider text-ink"
+          >
+            <Icon.Download s={16} /> Excel
+          </a>
+        </div>
+      </div>
+
       {profiles.length > 1 && (
         <div className="flex flex-wrap items-center gap-2 border-b border-line bg-paper2/40 px-4 py-2">
           <span className="tag">Palpitando como</span>
@@ -394,24 +426,6 @@ export function PalpiteClient({
             );
           });
         })()}
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2 border-t border-line bg-paper2/40 px-5 py-2">
-        <span className="tag mr-1">Exportar</span>
-        <a
-          href="/m/cartela/pdf"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-cond inline-flex items-center gap-1.5 rounded-sm border-2 border-ink bg-transparent px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-ink"
-        >
-          <Icon.Download s={12} /> PDF
-        </a>
-        <a
-          href="/m/cartela/csv"
-          className="font-cond inline-flex items-center gap-1.5 rounded-sm border-2 border-ink bg-transparent px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-ink"
-        >
-          <Icon.Download s={12} /> Excel (CSV)
-        </a>
       </div>
 
       <div className="flex items-center gap-2.5 border-t-2 border-ink bg-white/60 px-5 py-3">

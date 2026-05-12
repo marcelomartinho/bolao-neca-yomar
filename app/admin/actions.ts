@@ -122,3 +122,77 @@ export async function setMatchScore(
   revalidatePath(`/m/jogo/${matchId}`);
   return { ok: true };
 }
+
+/* ---------------- Zona perigosa: limpezas administrativas ---------------- */
+
+const UUID_RE = /^[0-9a-f-]{36}$/i;
+
+export async function clearPicksOfUser(
+  userId: string,
+  confirmation: string,
+): Promise<ActionResult> {
+  if (confirmation !== "APAGAR") return { ok: false, error: "Confirmação ausente" };
+  if (!UUID_RE.test(userId)) return { ok: false, error: "ID inválido" };
+  const guard = await requireHost();
+  if (!guard.ok) return { ok: false, error: guard.error };
+
+  const { count, error } = await guard.supabase
+    .from("picks")
+    .delete({ count: "exact" })
+    .eq("user_id", userId);
+  if (error) {
+    console.error("clearPicksOfUser failed", error);
+    return { ok: false, error: "Não foi possível apagar os palpites" };
+  }
+  console.warn(`[admin-reset] clearPicksOfUser host=${guard.user.id} target=${userId} deleted=${count}`);
+
+  revalidatePath("/ranking");
+  revalidatePath("/admin");
+  revalidatePath(`/${userId}`);
+  return { ok: true };
+}
+
+export async function clearAllPicks(confirmation: string): Promise<ActionResult> {
+  if (confirmation !== "APAGAR") return { ok: false, error: "Confirmação ausente" };
+  const guard = await requireHost();
+  if (!guard.ok) return { ok: false, error: guard.error };
+
+  // Delete all rows. Need WHERE clause — usar IS NOT NULL no match_id.
+  const { count, error } = await guard.supabase
+    .from("picks")
+    .delete({ count: "exact" })
+    .gte("match_id", 1);
+  if (error) {
+    console.error("clearAllPicks failed", error);
+    return { ok: false, error: "Não foi possível apagar todos os palpites" };
+  }
+  console.warn(`[admin-reset] clearAllPicks host=${guard.user.id} deleted=${count}`);
+
+  revalidatePath("/ranking");
+  revalidatePath("/admin");
+  revalidatePath("/");
+  return { ok: true };
+}
+
+export async function clearAllResults(confirmation: string): Promise<ActionResult> {
+  if (confirmation !== "APAGAR") return { ok: false, error: "Confirmação ausente" };
+  const guard = await requireHost();
+  if (!guard.ok) return { ok: false, error: guard.error };
+
+  const { count, error } = await guard.supabase
+    .from("matches")
+    .update({ result: null, score_a: null, score_b: null }, { count: "exact" })
+    .gte("id", 1);
+  if (error) {
+    console.error("clearAllResults failed", error);
+    return { ok: false, error: "Não foi possível apagar os resultados" };
+  }
+  console.warn(`[admin-reset] clearAllResults host=${guard.user.id} updated=${count}`);
+
+  revalidatePath("/");
+  revalidatePath("/grupos");
+  revalidatePath("/tabela");
+  revalidatePath("/ranking");
+  revalidatePath("/admin");
+  return { ok: true };
+}

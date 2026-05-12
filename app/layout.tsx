@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Inter_Tight, Barlow_Condensed, Geist_Mono } from "next/font/google";
 import { NavBar } from "@/components/NavBar";
+import { NavTransitionOverlay } from "@/components/NavTransitionOverlay";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import "./globals.css";
 
 const interTight = Inter_Tight({
@@ -33,7 +35,7 @@ export const metadata: Metadata = {
     template: "%s · Bolão Neca & Yomar",
   },
   description:
-    "Boletim do bolão familiar da Copa do Mundo 2026. 48 seleções, 12 grupos, 72 jogos, palpite 1 / X / 2.",
+    "Boletim do bolão familiar da Copa do Mundo 2026. 48 seleções, 12 grupos, 72 jogos.",
   applicationName: "Bolão Neca & Yomar",
   authors: [{ name: "Neca & Yomar" }],
   keywords: ["bolão", "copa do mundo 2026", "fifa", "família", "palpite"],
@@ -54,14 +56,34 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+async function getSessionFlags(): Promise<{ isAuthed: boolean; isAdmin: boolean }> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return { isAuthed: false, isAdmin: false };
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("host")
+      .eq("id", user.id)
+      .maybeSingle();
+    return { isAuthed: true, isAdmin: profile?.host === true };
+  } catch {
+    return { isAuthed: false, isAdmin: false };
+  }
+}
+
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const { isAuthed, isAdmin } = await getSessionFlags();
   return (
     <html
       lang="pt-BR"
       className={`${interTight.variable} ${barlowCondensed.variable} ${geistMono.variable}`}
     >
       <body className="paper-bg min-h-screen font-sans text-ink antialiased">
-        <NavBar />
+        <NavBar isAuthed={isAuthed} isAdmin={isAdmin} />
+        <NavTransitionOverlay />
         <div className="pb-16 md:pb-0">{children}</div>
       </body>
     </html>

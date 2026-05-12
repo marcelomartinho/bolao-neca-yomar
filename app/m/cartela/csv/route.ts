@@ -18,7 +18,6 @@ export async function GET(request: NextRequest) {
   } = await supabase.auth.getUser();
   if (!user) return new NextResponse("Não autenticado", { status: 401 });
 
-  // Resolve target profile via cookie or self
   const cookieVal = request.cookies.get(ACTIVE_PROFILE_COOKIE)?.value;
   let profileId = cookieVal && UUID_RE.test(cookieVal) ? cookieVal : user.id;
   const { data: allowed } = await supabase.rpc("is_profile_managed_by_uid", {
@@ -36,7 +35,7 @@ export async function GET(request: NextRequest) {
   const [{ data: matches }, { data: picks }] = await Promise.all([
     supabase
       .from("matches")
-      .select("id,group_letter,round,team_a,team_b,starts_at,result")
+      .select("id,group_letter,round,team_a,team_b,starts_at,result,score_a,score_b")
       .order("group_letter")
       .order("starts_at"),
     supabase
@@ -46,21 +45,41 @@ export async function GET(request: NextRequest) {
   ]);
 
   const pickByMatch = new Map((picks ?? []).map((p) => [p.match_id, p]));
+  const generated = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
+  const filled = (picks ?? []).length;
+  const total = (matches ?? []).length;
+  const score = (matches ?? []).reduce((acc, m) => {
+    const p = pickByMatch.get(m.id);
+    if (m.result && p?.pick === m.result) return acc + 1;
+    return acc;
+  }, 0);
+
+  // Preamble — 3 linhas + linha em branco antes do cabeçalho dos dados
+  const preamble: string[][] = [
+    [`Bolão Neca & Yomar — Copa 2026`],
+    [`Participante: ${profileName}`],
+    [`Gerado em: ${generated}`],
+    [`Palpitados: ${filled}/${total}`, `Pontos atuais: ${score}`],
+    [],
+  ];
 
   const header = [
-    "Jogo",
     "Grupo",
     "Rodada",
-    "Data (BRT)",
+    "Dia (BRT)",
     "Hora (BRT)",
+    "Jogo Nº",
     "Mandante",
-    "Palpite",
+    "Placar A",
+    "Placar B",
     "Visitante",
+    "Palpite",
     "Resultado",
     "Acerto",
-    "Atualizado",
+    "Atualizado em",
   ];
-  const rows: string[][] = [header];
+
+  const rows: string[][] = [...preamble, header];
 
   for (const m of matches ?? []) {
     const tA = TEAMS[m.team_a as keyof typeof TEAMS];
@@ -75,25 +94,41 @@ export async function GET(request: NextRequest) {
     const p = pickByMatch.get(m.id);
     const pickStr = p?.pick ?? "";
     const result = m.result ?? "";
-    const acerto = result && pickStr ? (result === pickStr ? "sim" : "nao") : "";
+    const scoreA = m.score_a == null ? "" : String(m.score_a);
+    const scoreB = m.score_b == null ? "" : String(m.score_b);
+    let acerto = "";
+    if (result && pickStr) acerto = result === pickStr ? "Sim" : "Não";
+
     rows.push([
-      String(m.id),
       m.group_letter,
       String(m.round),
       date,
       time,
+      String(m.id),
       tA?.name ?? m.team_a,
-      pickStr,
+      scoreA,
+      scoreB,
       tB?.name ?? m.team_b,
+      pickStr,
       result,
       acerto,
-      p?.updated_at ? new Date(p.updated_at).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" }) : "",
+      p?.updated_at
+        ? new Date(p.updated_at).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })
+        : "",
     ]);
   }
 
-  // UTF-8 BOM helps Excel detect encoding for accents
+  // UTF-8 BOM helps Excel BR open w/ accents + auto delim ;
   const body = "﻿" + rows.map((r) => r.map(csvEscape).join(";")).join("\r\n") + "\r\n";
-  const filename = `cartela-${profileName.toLowerCase().replace(/[^a-z0-9]+/gi, "-")}-${new Date().toISOString().slice(0, 10)}.csv`;
+  const dateStamp = new Date().toISOString().slice(0, 10);
+  const slug = profileName
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 40) || "participante";
+  const filename = `cartela-${slug}-${dateStamp}.csv`;
   return new NextResponse(body, {
     status: 200,
     headers: {

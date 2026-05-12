@@ -112,7 +112,7 @@ export default function RegulamentoPage() {
       </div>
 
       <PageFooter
-        left="Pág. 6 de 6"
+        left="Pág. 5 de 6"
         center="edição encerrada · até a próxima copa"
         right="impr. interna · neca & yomar"
       />

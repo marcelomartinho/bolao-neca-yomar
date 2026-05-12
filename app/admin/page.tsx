@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/boletim/PageHeader";
 import { PageFooter } from "@/components/boletim/PageFooter";
 import { AdminClient } from "./AdminClient";
 import { DeadlineEditor } from "./DeadlineEditor";
+import { AdminReset } from "./AdminReset";
 
 export const dynamic = "force-dynamic";
 
@@ -27,32 +28,56 @@ export default async function AdminPage() {
     return (
       <main className="paper-bg flex min-h-screen flex-col text-ink">
         <TriRule height={3} />
-        <PageHeader pageLabel="Pág. 7 — Administração" subtitle="Acesso restrito" />
-        <div className="flex flex-1 items-center justify-center px-9">
+        <PageHeader pageLabel="Pág. 6 — Administração" subtitle="Acesso restrito" />
+        <div className="flex flex-1 items-center justify-center px-4 md:px-9">
           <div className="border-2 border-dashed border-ink bg-white/60 p-8 text-center max-w-md">
             <p className="font-cond text-xl font-extrabold uppercase">Não autorizado</p>
             <p className="mt-3 text-sm text-ink2">
-              Só Neca e Yomar podem marcar resultados.
+              Só Marcelo, Bruno e Yomar podem marcar resultados.
             </p>
           </div>
         </div>
-        <PageFooter left="Pág. 7 de 7" right="boletim · vol. ii" />
+        <PageFooter left="Pág. 6 de 6" right="boletim · vol. ii" />
       </main>
     );
   }
 
-  const [matches, config] = await Promise.all([fetchMatches(), fetchAppConfig()]);
+  const [matches, config, profilesData] = await Promise.all([
+    fetchMatches(),
+    fetchAppConfig(),
+    supabase
+      .from("profiles")
+      .select("id,name,parent_id,auth_user_id")
+      .order("name"),
+  ]);
+
+  type ProfileRow = {
+    id: string;
+    name: string;
+    parent_id: string | null;
+    auth_user_id: string | null;
+  };
+
+  // Build email lookup via Auth admin? We have service role only on server actions.
+  // For UI display, only show name + kid flag. Emails omitted to avoid PII exposure.
+  const profilesForReset = (profilesData.data ?? []).map((p: ProfileRow) => ({
+    id: p.id,
+    name: p.name,
+    email: null as string | null,
+    is_kid: p.parent_id !== null,
+  }));
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
       <TriRule height={3} />
-      <PageHeader pageLabel="Pág. 7 — Administração" subtitle="Configuração & resultados" />
-      <div className="border-b border-line px-9 py-5">
+      <PageHeader pageLabel="Pág. 6 — Administração" subtitle="Configuração & resultados" />
+      <div className="border-b border-line px-4 py-5 md:px-9">
         <DeadlineEditor initialDeadline={config.picks_deadline} />
       </div>
       <AdminClient matches={matches} orgName={profile.name} />
+      <AdminReset profiles={profilesForReset} />
       <PageFooter
-        left="Pág. 7 de 7"
+        left="Pág. 6 de 6"
         center="acesso restrito à organização"
         right="boletim · vol. ii"
       />

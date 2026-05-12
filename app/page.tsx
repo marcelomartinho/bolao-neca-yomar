@@ -4,13 +4,23 @@ import { Stamp } from "@/components/boletim/Stamp";
 import { Avatar } from "@/components/Avatar";
 import { Icon } from "@/components/Icon";
 import { DeadlineBanner } from "@/components/DeadlineBanner";
+import { PageFooter } from "@/components/boletim/PageFooter";
 import { PARTICIPANTS } from "@/lib/static-data";
 import { fetchAppConfig } from "@/lib/config";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export default async function FrontPage() {
-  const config = await fetchAppConfig();
+  const [config, supabase] = await Promise.all([
+    fetchAppConfig(),
+    createSupabaseServerClient(),
+  ]);
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const isAuthed = !!user;
+
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
       <TriRule height={4} />
@@ -56,18 +66,27 @@ export default async function FrontPage() {
             vale <span className="italic text-gold">quinze mil</span>.
           </h2>
           <p className="mt-4 max-w-[540px] text-sm leading-relaxed md:mt-5 md:text-[14.5px]">
-            Foram quatro anos esperando. A Copa volta — agora em três países e com 48 seleções
-            — e o bolão da família volta junto, com regulamento de sempre:{" "}
-            <strong>marcar 1, X ou 2</strong> em cada um dos 72 jogos da fase de grupos. Quem
-            somar mais acertos, leva. Empate, divide.
+            Foram quatro anos esperando. A Copa volta — agora em três países e com 48 seleções —
+            e o bolão da família volta junto. Em cada jogo da fase de grupos você{" "}
+            <strong>escolhe o vencedor</strong> (ou marca empate). Quem somar mais acertos, leva.
+            Empate, divide.
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-2.5 md:mt-auto md:gap-3 md:pt-5">
-            <Link
-              href="/m/login"
-              className="bg-grass border-grass text-paper font-cond inline-flex items-center gap-2 rounded-sm border-2 px-4 py-2.5 text-sm font-bold uppercase tracking-wider md:px-5 md:py-3 md:text-[15px]"
-            >
-              <Icon.Check s={14} /> Entrar agora
-            </Link>
+            {!isAuthed ? (
+              <Link
+                href="/m/login"
+                className="bg-grass border-grass text-paper font-cond inline-flex items-center gap-2 rounded-sm border-2 px-4 py-2.5 text-sm font-bold uppercase tracking-wider md:px-5 md:py-3 md:text-[15px]"
+              >
+                <Icon.Check s={14} /> Entrar agora
+              </Link>
+            ) : (
+              <Link
+                href="/m/palpite"
+                className="bg-grass border-grass text-paper font-cond inline-flex items-center gap-2 rounded-sm border-2 px-4 py-2.5 text-sm font-bold uppercase tracking-wider md:px-5 md:py-3 md:text-[15px]"
+              >
+                <Icon.ArrowRight s={14} /> Ir pra cartela
+              </Link>
+            )}
             <Link
               href="/regulamento"
               className="text-ink border-ink font-cond inline-flex items-center gap-2 rounded-sm border-2 bg-transparent px-4 py-2.5 text-sm font-bold uppercase tracking-wider md:px-5 md:py-3 md:text-[15px]"
@@ -144,29 +163,14 @@ export default async function FrontPage() {
               ))}
             </div>
           </div>
-
-          <div className="mt-2 flex gap-4">
-            <Link
-              href="/grupos"
-              className="font-cond text-[13px] font-bold uppercase tracking-wider text-ink underline-offset-4 hover:underline"
-            >
-              Pág. 2 · Grupos →
-            </Link>
-            <Link
-              href="/tabela"
-              className="font-cond text-[13px] font-bold uppercase tracking-wider text-ink underline-offset-4 hover:underline"
-            >
-              Pág. 4 · Tabela →
-            </Link>
-          </div>
         </div>
       </div>
 
-      <footer className="flex justify-between border-t-2 border-ink px-9 py-2 font-mono text-[10.5px] uppercase tracking-[0.12em] text-ink2">
-        <span>Pág. 1 de 6</span>
-        <span>continua no verso → tabela completa</span>
-        <span>impr. interna</span>
-      </footer>
+      <PageFooter
+        left="Pág. 1 de 6"
+        center="capa do boletim"
+        right="impr. interna"
+      />
     </main>
   );
 }

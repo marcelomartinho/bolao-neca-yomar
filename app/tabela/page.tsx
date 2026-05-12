@@ -131,7 +131,7 @@ export default async function TabelaPage() {
       </div>
 
       <PageFooter
-        left="Pág. 4 de 6"
+        left="Pág. 3 de 6"
         center="placar do tempo normal (90 min) · prorrogação não conta"
         right="todos os horários em BRT"
       />

@@ -191,7 +191,7 @@ export default async function RankingPage() {
       </div>
 
       <PageFooter
-        left="Pág. 3 de 6"
+        left="Pág. 4 de 6"
         center="atualiza a cada cartela carimbada"
         right="boletim · vol. ii"
       />
