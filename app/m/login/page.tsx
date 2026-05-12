@@ -3,7 +3,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { signInWithMagicLink } from "./actions";
 import { TriRule } from "@/components/boletim/TriRule";
 import { BBrand } from "@/components/boletim/BBrand";
-import { Icon } from "@/components/Icon";
+import { MagicLinkSubmit } from "./MagicLinkSubmit";
 
 type SearchParams = { sent?: string; error?: string };
 
@@ -49,13 +49,7 @@ export default async function LoginPage({
               className="border-ink mt-1 w-full border-2 bg-white/60 px-3 py-3 font-sans text-base outline-none focus:border-grass"
             />
           </label>
-          <button
-            type="submit"
-            className="bg-grass border-grass text-paper font-cond inline-flex w-full items-center justify-center gap-2 rounded-sm border-2 px-5 py-3 text-sm font-bold uppercase tracking-wider"
-          >
-            <Icon.Mail s={16} />
-            Receber link mágico
-          </button>
+          <MagicLinkSubmit />
         </form>
 
         {sp.sent === "1" && (

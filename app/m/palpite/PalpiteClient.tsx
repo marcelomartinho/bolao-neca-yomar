@@ -308,8 +308,13 @@ export function PalpiteClient({
                       <div
                         key={m.id}
                         className="relative border-[1.5px] border-ink bg-white/65"
-                        style={{ opacity: isSaving ? 0.7 : 1 }}
                       >
+                        {isSaving && (
+                          <div className="absolute right-1.5 top-1.5 z-10 inline-flex items-center gap-1 rounded-sm border border-grass bg-paper px-1.5 py-0.5 text-grass shadow-sm">
+                            <Spinner />
+                            <span className="font-mono text-[8px] uppercase tracking-wider">salvando</span>
+                          </div>
+                        )}
                         <div className="flex items-stretch border-b-[1.5px] border-ink bg-paper2">
                           <div className="flex min-w-[60px] flex-col items-start justify-center bg-ink px-2.5 py-1.5 text-paper">
                             <span className="font-mono text-[8.5px] uppercase tracking-[0.22em] opacity-70">
