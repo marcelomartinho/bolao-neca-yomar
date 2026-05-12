@@ -53,7 +53,7 @@
         <tr><td align="center" style="padding:26px 32px 10px;">
           <table role="presentation" cellpadding="0" cellspacing="0" border="0">
             <tr><td align="center" style="background:#0b6b3a;border:2px solid #0b6b3a;">
-              <a href="{{ .ConfirmationURL }}" target="_blank" style="display:inline-block;padding:14px 28px;font-family:'Arial Narrow',Arial,Helvetica,sans-serif;font-weight:700;font-size:15px;letter-spacing:0.08em;text-transform:uppercase;color:#fbfaf4;text-decoration:none;">
+              <a href="{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink&next=/m/palpite" target="_blank" style="display:inline-block;padding:14px 28px;font-family:'Arial Narrow',Arial,Helvetica,sans-serif;font-weight:700;font-size:15px;letter-spacing:0.08em;text-transform:uppercase;color:#fbfaf4;text-decoration:none;">
                 Entrar no boletim →
               </a>
             </td></tr>
@@ -66,7 +66,7 @@
           </p>
           <p style="margin:14px 0 0;font-family:Arial,Helvetica,sans-serif;font-size:11px;line-height:1.5;color:#5a6a86;word-break:break-all;">
             Se o botão não funcionar, copie e cole no navegador:<br>
-            <span style="color:#0b2c5c;">{{ .ConfirmationURL }}</span>
+            <span style="color:#0b2c5c;">{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=magiclink&next=/m/palpite</span>
           </p>
         </td></tr>
 
