@@ -41,10 +41,6 @@ export default async function SharePage() {
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
-      <div className="flex h-[38px] items-center justify-between px-5 text-[13px] font-semibold">
-        <span>9:41</span>
-        <a href="/m/palpite" className="text-xs font-medium text-ink2">Fechar</a>
-      </div>
       <div className="flex items-center justify-between border-b-2 border-ink px-5 py-3.5">
         <BBrand size={16} />
         <span className="tag">Compartilhar</span>

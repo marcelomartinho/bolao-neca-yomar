@@ -90,9 +90,9 @@ export function NavBar({ isAuthed, isAdmin }: Props) {
 
   return (
     <>
-      {/* Desktop top */}
+      {/* Desktop top — sticky */}
       <nav
-        className="border-line bg-paper hidden border-b md:flex md:items-center md:justify-between md:gap-6 md:px-9 md:py-2"
+        className="border-line bg-paper hidden border-b md:sticky md:top-0 md:z-50 md:flex md:items-center md:justify-between md:gap-6 md:px-9 md:py-2"
         aria-label="Navegação principal"
       >
         <button

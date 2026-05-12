@@ -140,13 +140,6 @@ export function PalpiteClient({
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
-      <div className="flex h-[38px] items-center justify-between px-5 text-[13px] font-semibold">
-        <span>9:41</span>
-        <form action="/m/logout" method="POST">
-          <button className="text-xs font-medium text-ink2">Sair</button>
-        </form>
-      </div>
-
       <div className="flex items-center justify-between border-b-2 border-ink px-5 py-2.5">
         <BBrand size={16} />
         <span className="tag">Cartela</span>

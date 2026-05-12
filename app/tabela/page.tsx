@@ -30,22 +30,32 @@ export default async function TabelaPage() {
         subtitle={`72 jogos · ${totalResolved} resolvido${totalResolved === 1 ? "" : "s"}`}
       />
 
-      <div className="flex flex-wrap items-center gap-1.5 border-b border-line px-4 py-2.5 md:gap-2 md:px-9 md:py-3">
-        <span className="mr-1 font-mono text-[9px] uppercase tracking-[0.16em] text-ink2 md:text-[10px] md:tracking-[0.18em]">
-          Dias
-        </span>
-        {days.map((d) => {
-          const dt = new Date(d + "T15:00:00Z");
-          return (
-            <a
-              key={d}
-              href={`#dia-${d}`}
-              className="font-cond border border-line bg-transparent px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-ink hover:border-ink md:px-2.5 md:text-xs"
-            >
-              {formatDayBRT(dt)}
-            </a>
-          );
-        })}
+      <div className="sticky top-0 z-30 border-b-2 border-ink bg-paper/95 backdrop-blur md:top-9">
+        <div className="flex items-center gap-2 px-4 py-2 md:px-9 md:py-2.5">
+          <span className="shrink-0 font-mono text-[9px] uppercase tracking-[0.16em] text-ink2 md:text-[10px] md:tracking-[0.18em]">
+            Pular pra
+          </span>
+          <div className="-mx-1 flex flex-1 snap-x snap-mandatory gap-1.5 overflow-x-auto px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {days.map((d, i) => {
+              const dt = new Date(d + "T15:00:00Z");
+              const dayMatches = byDay.get(d)!;
+              const round = dayMatches[0].round;
+              return (
+                <a
+                  key={d}
+                  href={`#dia-${d}`}
+                  className="font-cond inline-flex shrink-0 snap-start flex-col items-center gap-0 rounded-sm border-[1.5px] border-line bg-paper px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-ink hover:border-ink md:text-xs"
+                  title={`Dia ${i + 1} · Rodada ${round} · ${dayMatches.length} jogos`}
+                >
+                  <span>{formatDayBRT(dt)}</span>
+                  <span className="font-mono text-[8px] font-normal tracking-[0.1em] text-ink2 md:text-[9px]">
+                    R{round} · {dayMatches.length}j
+                  </span>
+                </a>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
       <div className="flex-1 overflow-auto">

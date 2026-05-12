@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NavLink } from "@/components/NavLink";
 import { TriRule } from "@/components/boletim/TriRule";
 import { Stamp } from "@/components/boletim/Stamp";
 import { Avatar } from "@/components/Avatar";
@@ -73,26 +74,26 @@ export default async function FrontPage() {
           </p>
           <div className="mt-5 flex flex-wrap items-center gap-2.5 md:mt-auto md:gap-3 md:pt-5">
             {!isAuthed ? (
-              <Link
+              <NavLink
                 href="/m/login"
                 className="bg-grass border-grass text-paper font-cond inline-flex items-center gap-2 rounded-sm border-2 px-4 py-2.5 text-sm font-bold uppercase tracking-wider md:px-5 md:py-3 md:text-[15px]"
               >
                 <Icon.Check s={14} /> Entrar agora
-              </Link>
+              </NavLink>
             ) : (
-              <Link
+              <NavLink
                 href="/m/palpite"
                 className="bg-grass border-grass text-paper font-cond inline-flex items-center gap-2 rounded-sm border-2 px-4 py-2.5 text-sm font-bold uppercase tracking-wider md:px-5 md:py-3 md:text-[15px]"
               >
                 <Icon.ArrowRight s={14} /> Ir pra cartela
-              </Link>
+              </NavLink>
             )}
-            <Link
+            <NavLink
               href="/regulamento"
               className="text-ink border-ink font-cond inline-flex items-center gap-2 rounded-sm border-2 bg-transparent px-4 py-2.5 text-sm font-bold uppercase tracking-wider md:px-5 md:py-3 md:text-[15px]"
             >
               Ler regulamento
-            </Link>
+            </NavLink>
             <div className="ml-auto hidden flex-col items-end gap-[3px] md:flex">
               <TriRule height={3} style={{ width: 64 }} />
               <span className="font-mono text-[9px] uppercase tracking-[0.2em] text-ink2">
