@@ -39,7 +39,7 @@ export default async function FrontPage() {
         </div>
         <div className="text-right">
           <div className="font-mono text-[9px] uppercase tracking-[0.16em] text-gold md:text-[10px] md:tracking-[0.18em]">
-            vol. ii — copa do mundo
+            ed. xi — copa do mundo
           </div>
           <div className="font-cond mt-0.5 text-base font-bold tracking-tight md:text-[22px]">
             2026 · 48 países

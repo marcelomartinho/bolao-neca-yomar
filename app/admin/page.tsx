@@ -37,7 +37,7 @@ export default async function AdminPage() {
             </p>
           </div>
         </div>
-        <PageFooter left="Pág. 6 de 6" right="boletim · vol. ii" />
+        <PageFooter left="Pág. 6 de 6" right="boletim · ed. 11" />
       </main>
     );
   }
@@ -79,7 +79,7 @@ export default async function AdminPage() {
       <PageFooter
         left="Pág. 6 de 6"
         center="acesso restrito à organização"
-        right="boletim · vol. ii"
+        right="boletim · ed. 11"
       />
     </main>
   );

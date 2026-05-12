@@ -30,7 +30,7 @@ export default async function TabelaPage() {
         subtitle={`72 jogos · ${totalResolved} resolvido${totalResolved === 1 ? "" : "s"}`}
       />
 
-      <div className="border-b-2 border-ink bg-paper/95">
+      <div className="sticky top-[57px] z-30 border-b-2 border-ink bg-paper/95 backdrop-blur md:top-[124px]">
         <div className="flex items-center gap-2 px-4 py-2 md:px-9 md:py-2.5">
           <span className="shrink-0 font-mono text-[9px] uppercase tracking-[0.16em] text-ink2 md:text-[10px] md:tracking-[0.18em]">
             Pular pra

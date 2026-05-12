@@ -159,7 +159,7 @@ export default async function PerfilPage({ params }: Props) {
       <PageFooter
         left="Pág. 5 de 6"
         center={`cartela de ${profile.name}`}
-        right="boletim · vol. ii"
+        right="boletim · ed. 11"
       />
     </main>
   );

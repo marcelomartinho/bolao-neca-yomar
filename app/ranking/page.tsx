@@ -32,13 +32,7 @@ export default async function RankingPage() {
       <div className="flex flex-wrap items-center gap-2 border-b border-line px-4 py-3 md:gap-3.5 md:px-9 md:py-4">
         <Stamp color="#0b6b3a" rot={-2}>{resolved} resolvidos</Stamp>
         <Stamp color="#c79410" rot={3}>{remaining} a faltar</Stamp>
-        <Stamp color="#0b2c5c" rot={-1}>Edição 02</Stamp>
-        <Link
-          href="/m/palpite"
-          className="font-cond ml-auto inline-flex items-center gap-1.5 rounded-sm border-2 border-ink bg-transparent px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider md:px-3 md:py-1.5 md:text-xs"
-        >
-          <Icon.ArrowRight s={12} /> Cartela
-        </Link>
+        <Stamp color="#0b2c5c" rot={-1}>Edição 11</Stamp>
       </div>
 
       <h2 className="font-cond m-0 break-words px-4 pb-1.5 pt-3 text-2xl font-extrabold uppercase leading-[1.05] tracking-tight md:px-9 md:pt-4 md:text-[44px] md:leading-none">
@@ -193,7 +187,7 @@ export default async function RankingPage() {
       <PageFooter
         left="Pág. 4 de 6"
         center="atualiza a cada cartela carimbada"
-        right="boletim · vol. ii"
+        right="boletim · ed. 11"
       />
     </main>
   );
