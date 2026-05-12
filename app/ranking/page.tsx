@@ -179,7 +179,7 @@ export default async function RankingPage() {
                   </span>
                 </Link>
                 <span className="text-right font-mono text-xs text-ink2">
-                  {p.score ?? 0}/{resolved || matches.length}
+                  {resolved > 0 ? `${p.score ?? 0}/${resolved}` : "—"}
                 </span>
                 <span className="text-right font-cond text-[17px] font-bold">
                   {p.score ?? 0}
