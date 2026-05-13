@@ -6,7 +6,6 @@ import { Avatar } from "@/components/Avatar";
 import { Icon } from "@/components/Icon";
 import { DeadlineBanner } from "@/components/DeadlineBanner";
 import { PageFooter } from "@/components/boletim/PageFooter";
-import { PARTICIPANTS } from "@/lib/static-data";
 import { fetchAppConfig } from "@/lib/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
@@ -21,6 +20,31 @@ export default async function FrontPage() {
     data: { user },
   } = await supabase.auth.getUser();
   const isAuthed = !!user;
+
+  const { data: profilesData } = await supabase
+    .from("profiles")
+    .select("id,name,initials,emoji,host,parent_id")
+    .order("host", { ascending: false })
+    .order("parent_id", { ascending: true, nullsFirst: true })
+    .order("name", { ascending: true });
+  type Roster = {
+    id: string;
+    name: string;
+    initials: string | null;
+    emoji: string | null;
+    host: boolean;
+    is_kid: boolean;
+  };
+  const roster: Roster[] = (profilesData ?? []).map((p) => ({
+    id: p.id,
+    name: p.name,
+    initials: p.initials,
+    emoji: p.emoji,
+    host: p.host ?? false,
+    is_kid: p.parent_id !== null,
+  }));
+  const kidsCount = roster.filter((r) => r.is_kid).length;
+  const adultsCount = roster.length - kidsCount;
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
@@ -148,25 +172,34 @@ export default async function FrontPage() {
                 Inscritos
               </span>
               <span className="font-mono text-[11px] text-ink2">
-                {PARTICIPANTS.length} pessoas
+                {roster.length} {roster.length === 1 ? "pessoa" : "pessoas"}
+                {kidsCount > 0 && (
+                  <> · {adultsCount} adultos + {kidsCount} criança{kidsCount === 1 ? "" : "s"}</>
+                )}
               </span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              {PARTICIPANTS.map((p) => (
-                <div
-                  key={p.id}
-                  className="flex items-center gap-2 border-b border-dashed border-line px-2 py-1.5"
-                >
-                  <Avatar name={p.name} initials={p.initials} emoji={p.emoji} size={26} />
-                  <span className="flex-1 text-[13px] font-medium">{p.name}</span>
-                  {p.host && (
-                    <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-ink2">
-                      ORG
-                    </span>
-                  )}
-                </div>
-              ))}
-            </div>
+            {roster.length === 0 ? (
+              <p className="text-xs italic text-ink2">Carregando inscritos…</p>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                {roster.map((p) => (
+                  <div
+                    key={p.id}
+                    className="flex items-center gap-2 border-b border-dashed border-line px-2 py-1.5"
+                  >
+                    <Avatar name={p.name} initials={p.initials} emoji={p.emoji} size={26} />
+                    <span className="flex-1 text-[13px] font-medium">{p.name}</span>
+                    {p.host ? (
+                      <span className="font-mono text-[9px] uppercase tracking-[0.1em] text-ink2">
+                        ORG
+                      </span>
+                    ) : p.is_kid ? (
+                      <span className="text-[10px]" title="criança">🧒</span>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
