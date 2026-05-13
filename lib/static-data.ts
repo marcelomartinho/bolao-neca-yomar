@@ -1,41 +1,28 @@
-// Dados estáticos da Copa 2026 — espelham supabase/migrations/0003_seed.sql.
-// Usados em RSC enquanto não conectamos Supabase nas telas estáticas.
-// Substituir por queries reais no Sprint 3 (lib/db/*).
+// Dados oficiais Copa do Mundo FIFA 2026 (sorteio dezembro/2025).
+// Fonte: Wikipedia + Aljazeera + worldcupwiki.com (mai/2026).
+// 48 seleções, 12 grupos, 72 jogos da fase de grupos.
+// Horários armazenados em ISO UTC; exibidos em BRT (UTC-3) no app.
 
 export type TeamCode =
-  | "MEX" | "COL" | "NOR" | "UZB" | "CAN" | "BEL" | "TUN" | "NZL"
-  | "USA" | "CRO" | "PAR" | "JOR" | "BRA" | "SUI" | "SEN" | "KSA"
-  | "ARG" | "JPN" | "EGY" | "CPV" | "FRA" | "DEN" | "NGA" | "PAN"
-  | "ESP" | "KOR" | "CIV" | "JAM" | "ENG" | "POL" | "ALG" | "RSA"
-  | "GER" | "ECU" | "CMR" | "QAT" | "POR" | "URU" | "IRN" | "AUS"
-  | "ITA" | "SRB" | "MAR" | "TUR" | "NED" | "AUT" | "GHA" | "CRC";
+  | "MEX" | "RSA" | "KOR" | "CZE"
+  | "CAN" | "BIH" | "QAT" | "SUI"
+  | "BRA" | "MAR" | "HAI" | "SCO"
+  | "USA" | "PAR" | "AUS" | "TUR"
+  | "GER" | "CUR" | "CIV" | "ECU"
+  | "NED" | "JPN" | "SWE" | "TUN"
+  | "BEL" | "EGY" | "IRN" | "NZL"
+  | "ESP" | "CPV" | "KSA" | "URU"
+  | "FRA" | "SEN" | "IRQ" | "NOR"
+  | "ARG" | "ALG" | "AUT" | "JOR"
+  | "POR" | "COD" | "UZB" | "COL"
+  | "ENG" | "CRO" | "GHA" | "PAN";
 
 export type Team = {
   code: TeamCode;
   name: string;
-  iso2: string; // ISO 3166-1 alpha-2 (or gb-eng for England) usado pelo flagcdn.com
-  colors: [string, string, string]; // fallback ainda em uso em /dev
+  iso2: string;
+  colors: [string, string, string];
 };
-
-const ISO2: Record<TeamCode, string> = {
-  MEX: "mx", USA: "us", CAN: "ca", BRA: "br",
-  ARG: "ar", FRA: "fr", ESP: "es", ENG: "gb-eng",
-  GER: "de", POR: "pt", ITA: "it", BEL: "be",
-  NED: "nl", CRO: "hr", SUI: "ch", DEN: "dk",
-  POL: "pl", SRB: "rs", AUT: "at", NOR: "no",
-  TUR: "tr", URU: "uy", COL: "co", ECU: "ec",
-  PAR: "py", JPN: "jp", KOR: "kr", AUS: "au",
-  IRN: "ir", JOR: "jo", UZB: "uz", KSA: "sa",
-  QAT: "qa", MAR: "ma", TUN: "tn", SEN: "sn",
-  EGY: "eg", ALG: "dz", NGA: "ng", GHA: "gh",
-  CMR: "cm", CIV: "ci", RSA: "za", CPV: "cv",
-  CRC: "cr", JAM: "jm", PAN: "pa", NZL: "nz",
-};
-
-export function flagUrl(code: TeamCode, width: 20 | 40 | 80 | 160 = 40): string {
-  const c = ISO2[code];
-  return `https://flagcdn.com/w${width}/${c}.png`;
-}
 
 export type GroupLetter =
   | "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" | "J" | "K" | "L";
@@ -56,47 +43,65 @@ export type Match = {
 };
 
 const COLORS: Record<TeamCode, [string, string, string]> = {
-  BRA: ["#009b3a", "#fedf00", "#002776"], ARG: ["#74acdf", "#ffffff", "#74acdf"],
-  USA: ["#b22234", "#ffffff", "#3c3b6e"], MEX: ["#006847", "#ffffff", "#ce1126"],
-  CAN: ["#d52b1e", "#ffffff", "#d52b1e"], ESP: ["#aa151b", "#f1bf00", "#aa151b"],
-  FRA: ["#0055a4", "#ffffff", "#ef4135"], ENG: ["#ffffff", "#ce1124", "#ffffff"],
-  GER: ["#000000", "#dd0000", "#ffce00"], POR: ["#006600", "#006600", "#ff0000"],
-  ITA: ["#008c45", "#f4f5f0", "#cd212a"], BEL: ["#000000", "#fae042", "#ed2939"],
-  NED: ["#ae1c28", "#ffffff", "#21468b"], CRO: ["#171796", "#ffffff", "#ff0000"],
-  SUI: ["#d52b1e", "#ffffff", "#d52b1e"], DEN: ["#c8102e", "#ffffff", "#c8102e"],
-  POL: ["#ffffff", "#dc143c", "#dc143c"], SRB: ["#c6363c", "#0c4076", "#ffffff"],
-  AUT: ["#ed2939", "#ffffff", "#ed2939"], NOR: ["#ef2b2d", "#ffffff", "#002868"],
-  TUR: ["#e30a17", "#ffffff", "#e30a17"], URU: ["#7eb6ea", "#ffffff", "#7eb6ea"],
-  COL: ["#fcd116", "#003893", "#ce1126"], ECU: ["#ffce00", "#034ea2", "#ed1c24"],
-  PAR: ["#d52b1e", "#ffffff", "#0038a8"], JPN: ["#ffffff", "#bc002d", "#ffffff"],
-  KOR: ["#ffffff", "#003478", "#ffffff"], AUS: ["#012169", "#ffffff", "#e4002b"],
-  IRN: ["#239f40", "#ffffff", "#da0000"], JOR: ["#000000", "#ffffff", "#007a3d"],
-  UZB: ["#1eb53a", "#ffffff", "#0099b5"], KSA: ["#006c35", "#ffffff", "#006c35"],
-  QAT: ["#8a1538", "#ffffff", "#8a1538"], MAR: ["#c1272d", "#006233", "#c1272d"],
-  TUN: ["#e70013", "#ffffff", "#e70013"], SEN: ["#00853f", "#fdef42", "#e31b23"],
-  EGY: ["#ce1126", "#ffffff", "#000000"], ALG: ["#006633", "#ffffff", "#d21034"],
-  NGA: ["#008753", "#ffffff", "#008753"], GHA: ["#ce1126", "#fcd116", "#006b3f"],
-  CMR: ["#007a5e", "#ce1126", "#fcd116"], CIV: ["#f77f00", "#ffffff", "#009e60"],
-  RSA: ["#007749", "#ffb612", "#de3831"], CPV: ["#003893", "#ffffff", "#cf2027"],
-  CRC: ["#002b7f", "#ffffff", "#ce1126"], JAM: ["#009b3a", "#000000", "#ffd100"],
-  PAN: ["#005293", "#ffffff", "#d21034"], NZL: ["#012169", "#ffffff", "#cc142b"],
+  MEX: ["#006847", "#ffffff", "#ce1126"], RSA: ["#007749", "#ffb612", "#de3831"],
+  KOR: ["#ffffff", "#003478", "#c60c30"], CZE: ["#ffffff", "#d7141a", "#11457e"],
+  CAN: ["#d52b1e", "#ffffff", "#d52b1e"], BIH: ["#002395", "#fecb00", "#002395"],
+  QAT: ["#8a1538", "#ffffff", "#8a1538"], SUI: ["#d52b1e", "#ffffff", "#d52b1e"],
+  BRA: ["#009b3a", "#fedf00", "#002776"], MAR: ["#c1272d", "#006233", "#c1272d"],
+  HAI: ["#00209f", "#d21034", "#00209f"], SCO: ["#005eb8", "#ffffff", "#005eb8"],
+  USA: ["#b22234", "#ffffff", "#3c3b6e"], PAR: ["#d52b1e", "#ffffff", "#0038a8"],
+  AUS: ["#012169", "#ffffff", "#e4002b"], TUR: ["#e30a17", "#ffffff", "#e30a17"],
+  GER: ["#000000", "#dd0000", "#ffce00"], CUR: ["#012a87", "#f9e814", "#012a87"],
+  CIV: ["#f77f00", "#ffffff", "#009e60"], ECU: ["#ffce00", "#034ea2", "#ed1c24"],
+  NED: ["#ae1c28", "#ffffff", "#21468b"], JPN: ["#ffffff", "#bc002d", "#ffffff"],
+  SWE: ["#005293", "#fecc00", "#005293"], TUN: ["#e70013", "#ffffff", "#e70013"],
+  BEL: ["#000000", "#fae042", "#ed2939"], EGY: ["#ce1126", "#ffffff", "#000000"],
+  IRN: ["#239f40", "#ffffff", "#da0000"], NZL: ["#012169", "#ffffff", "#cc142b"],
+  ESP: ["#aa151b", "#f1bf00", "#aa151b"], CPV: ["#003893", "#ffffff", "#cf2027"],
+  KSA: ["#006c35", "#ffffff", "#006c35"], URU: ["#7eb6ea", "#ffffff", "#7eb6ea"],
+  FRA: ["#0055a4", "#ffffff", "#ef4135"], SEN: ["#00853f", "#fdef42", "#e31b23"],
+  IRQ: ["#ce1126", "#ffffff", "#000000"], NOR: ["#ef2b2d", "#ffffff", "#002868"],
+  ARG: ["#74acdf", "#ffffff", "#74acdf"], ALG: ["#006633", "#ffffff", "#d21034"],
+  AUT: ["#ed2939", "#ffffff", "#ed2939"], JOR: ["#000000", "#ffffff", "#007a3d"],
+  POR: ["#006600", "#006600", "#ff0000"], COD: ["#007fff", "#fae042", "#ce1021"],
+  UZB: ["#1eb53a", "#ffffff", "#0099b5"], COL: ["#fcd116", "#003893", "#ce1126"],
+  ENG: ["#ffffff", "#ce1124", "#ffffff"], CRO: ["#ff0000", "#ffffff", "#171796"],
+  GHA: ["#ce1126", "#fcd116", "#006b3f"], PAN: ["#005293", "#ffffff", "#d21034"],
+};
+
+const ISO2: Record<TeamCode, string> = {
+  MEX: "mx", RSA: "za", KOR: "kr", CZE: "cz",
+  CAN: "ca", BIH: "ba", QAT: "qa", SUI: "ch",
+  BRA: "br", MAR: "ma", HAI: "ht", SCO: "gb-sct",
+  USA: "us", PAR: "py", AUS: "au", TUR: "tr",
+  GER: "de", CUR: "cw", CIV: "ci", ECU: "ec",
+  NED: "nl", JPN: "jp", SWE: "se", TUN: "tn",
+  BEL: "be", EGY: "eg", IRN: "ir", NZL: "nz",
+  ESP: "es", CPV: "cv", KSA: "sa", URU: "uy",
+  FRA: "fr", SEN: "sn", IRQ: "iq", NOR: "no",
+  ARG: "ar", ALG: "dz", AUT: "at", JOR: "jo",
+  POR: "pt", COD: "cd", UZB: "uz", COL: "co",
+  ENG: "gb-eng", CRO: "hr", GHA: "gh", PAN: "pa",
 };
 
 const NAMES: Record<TeamCode, string> = {
-  MEX: "México", USA: "Estados Unidos", CAN: "Canadá", BRA: "Brasil",
-  ARG: "Argentina", FRA: "França", ESP: "Espanha", ENG: "Inglaterra",
-  GER: "Alemanha", POR: "Portugal", ITA: "Itália", BEL: "Bélgica",
-  NED: "Holanda", CRO: "Croácia", SUI: "Suíça", DEN: "Dinamarca",
-  POL: "Polônia", SRB: "Sérvia", AUT: "Áustria", NOR: "Noruega",
-  TUR: "Turquia", URU: "Uruguai", COL: "Colômbia", ECU: "Equador",
-  PAR: "Paraguai", JPN: "Japão", KOR: "Coreia do Sul", AUS: "Austrália",
-  IRN: "Irã", JOR: "Jordânia", UZB: "Uzbequistão", KSA: "Arábia Saudita",
-  QAT: "Catar", MAR: "Marrocos", TUN: "Tunísia", SEN: "Senegal",
-  EGY: "Egito", ALG: "Argélia", NGA: "Nigéria", GHA: "Gana",
-  CMR: "Camarões", CIV: "Costa do Marfim", RSA: "África do Sul",
-  CPV: "Cabo Verde", CRC: "Costa Rica", JAM: "Jamaica", PAN: "Panamá",
-  NZL: "Nova Zelândia",
+  MEX: "México", RSA: "África do Sul", KOR: "Coreia do Sul", CZE: "Tchéquia",
+  CAN: "Canadá", BIH: "Bósnia e Herzegovina", QAT: "Catar", SUI: "Suíça",
+  BRA: "Brasil", MAR: "Marrocos", HAI: "Haiti", SCO: "Escócia",
+  USA: "Estados Unidos", PAR: "Paraguai", AUS: "Austrália", TUR: "Turquia",
+  GER: "Alemanha", CUR: "Curaçao", CIV: "Costa do Marfim", ECU: "Equador",
+  NED: "Holanda", JPN: "Japão", SWE: "Suécia", TUN: "Tunísia",
+  BEL: "Bélgica", EGY: "Egito", IRN: "Irã", NZL: "Nova Zelândia",
+  ESP: "Espanha", CPV: "Cabo Verde", KSA: "Arábia Saudita", URU: "Uruguai",
+  FRA: "França", SEN: "Senegal", IRQ: "Iraque", NOR: "Noruega",
+  ARG: "Argentina", ALG: "Argélia", AUT: "Áustria", JOR: "Jordânia",
+  POR: "Portugal", COD: "RD Congo", UZB: "Uzbequistão", COL: "Colômbia",
+  ENG: "Inglaterra", CRO: "Croácia", GHA: "Gana", PAN: "Panamá",
 };
+
+export function flagUrl(code: TeamCode, width: 20 | 40 | 80 | 160 = 40): string {
+  return `https://flagcdn.com/w${width}/${ISO2[code]}.png`;
+}
 
 export const TEAMS: Record<TeamCode, Team> = Object.fromEntries(
   (Object.keys(NAMES) as TeamCode[]).map((code) => [
@@ -106,53 +111,115 @@ export const TEAMS: Record<TeamCode, Team> = Object.fromEntries(
 ) as Record<TeamCode, Team>;
 
 export const GROUPS: Group[] = [
-  { letter: "A", teams: ["MEX", "COL", "NOR", "UZB"] },
-  { letter: "B", teams: ["CAN", "BEL", "TUN", "NZL"] },
-  { letter: "C", teams: ["USA", "CRO", "PAR", "JOR"] },
-  { letter: "D", teams: ["BRA", "SUI", "SEN", "KSA"] },
-  { letter: "E", teams: ["ARG", "JPN", "EGY", "CPV"] },
-  { letter: "F", teams: ["FRA", "DEN", "NGA", "PAN"] },
-  { letter: "G", teams: ["ESP", "KOR", "CIV", "JAM"] },
-  { letter: "H", teams: ["ENG", "POL", "ALG", "RSA"] },
-  { letter: "I", teams: ["GER", "ECU", "CMR", "QAT"] },
-  { letter: "J", teams: ["POR", "URU", "IRN", "AUS"] },
-  { letter: "K", teams: ["ITA", "SRB", "MAR", "TUR"] },
-  { letter: "L", teams: ["NED", "AUT", "GHA", "CRC"] },
+  { letter: "A", teams: ["MEX", "RSA", "KOR", "CZE"] },
+  { letter: "B", teams: ["CAN", "BIH", "QAT", "SUI"] },
+  { letter: "C", teams: ["BRA", "MAR", "HAI", "SCO"] },
+  { letter: "D", teams: ["USA", "PAR", "AUS", "TUR"] },
+  { letter: "E", teams: ["GER", "CUR", "CIV", "ECU"] },
+  { letter: "F", teams: ["NED", "JPN", "SWE", "TUN"] },
+  { letter: "G", teams: ["BEL", "EGY", "IRN", "NZL"] },
+  { letter: "H", teams: ["ESP", "CPV", "KSA", "URU"] },
+  { letter: "I", teams: ["FRA", "SEN", "IRQ", "NOR"] },
+  { letter: "J", teams: ["ARG", "ALG", "AUT", "JOR"] },
+  { letter: "K", teams: ["POR", "COD", "UZB", "COL"] },
+  { letter: "L", teams: ["ENG", "CRO", "GHA", "PAN"] },
 ];
 
-const PAIRS: Array<[number, number, 1 | 2 | 3]> = [
-  [0, 1, 1], [2, 3, 1],
-  [0, 2, 2], [1, 3, 2],
-  [0, 3, 3], [1, 2, 3],
-];
-
-const CITIES = [
-  "Cidade do México", "Los Angeles", "Toronto", "Nova Iorque", "Dallas",
-  "Miami", "Atlanta", "Vancouver", "Monterrey", "Filadélfia",
-  "Seattle", "Houston", "Guadalajara", "Kansas City", "San Francisco", "Boston",
-];
-
-function buildMatches(): Match[] {
-  const all: Array<Omit<Match, "id" | "startsAt" | "city">> = [];
-  for (const g of GROUPS) {
-    for (const [i, j, round] of PAIRS) {
-      all.push({ group: g.letter, round, a: g.teams[i], b: g.teams[j] });
-    }
-  }
-  all.sort((x, y) => x.round - y.round || x.group.localeCompare(y.group));
-  const start = new Date(Date.UTC(2026, 5, 11, 16, 0, 0)); // 11 jun 2026, 13h BRT
-  const HOURS_BRT = [13, 16, 19, 22];
-  return all.map((m, i) => {
-    const dayOffset = Math.floor(i / 4);
-    const slot = i % 4;
-    const d = new Date(start);
-    d.setUTCDate(d.getUTCDate() + dayOffset);
-    d.setUTCHours(HOURS_BRT[slot] + 3, 0, 0, 0); // BRT = UTC-3
-    return { ...m, id: i + 1, startsAt: d, city: CITIES[(i * 3) % CITIES.length] };
-  });
+// 72 jogos da fase de grupos. Horários ET (Eastern Time, UTC-4 em junho).
+// Convertidos para Date UTC (ET + 4h).
+function dt(date: string, etTime: string): Date {
+  // ET = EDT = UTC-4 em junho. UTC = ET + 4h.
+  // Use UTC explícito sem ambiguidade.
+  const [h, m] = etTime.split(":").map(Number);
+  const [y, mo, d] = date.split("-").map(Number);
+  return new Date(Date.UTC(y, mo - 1, d, h + 4, m, 0));
 }
 
-export const MATCHES: Match[] = buildMatches();
+type RawMatch = [number, string, string, GroupLetter, TeamCode, TeamCode, string];
+const RAW: RawMatch[] = [
+  [1, "2026-06-11", "15:00", "A", "MEX", "RSA", "Cidade do México — Estadio Azteca"],
+  [2, "2026-06-11", "22:00", "A", "KOR", "CZE", "Zapopan — Estadio Akron"],
+  [3, "2026-06-12", "15:00", "B", "CAN", "BIH", "Toronto — BMO Field"],
+  [4, "2026-06-12", "21:00", "D", "USA", "PAR", "Inglewood — SoFi Stadium"],
+  [5, "2026-06-13", "15:00", "B", "QAT", "SUI", "Santa Clara — Levi's Stadium"],
+  [6, "2026-06-13", "18:00", "C", "BRA", "MAR", "East Rutherford — MetLife Stadium"],
+  [7, "2026-06-13", "21:00", "C", "HAI", "SCO", "Foxborough — Gillette Stadium"],
+  [8, "2026-06-14", "00:00", "D", "AUS", "TUR", "Vancouver — BC Place"],
+  [9, "2026-06-14", "13:00", "E", "GER", "CUR", "Houston — NRG Stadium"],
+  [10, "2026-06-14", "16:00", "F", "NED", "JPN", "Arlington — AT&T Stadium"],
+  [11, "2026-06-14", "19:00", "E", "CIV", "ECU", "Philadelphia — Lincoln Financial Field"],
+  [12, "2026-06-14", "22:00", "F", "SWE", "TUN", "Monterrey — Estadio BBVA"],
+  [13, "2026-06-15", "12:00", "H", "ESP", "CPV", "Atlanta — Mercedes-Benz Stadium"],
+  [14, "2026-06-15", "15:00", "G", "BEL", "EGY", "Seattle — Lumen Field"],
+  [15, "2026-06-15", "18:00", "H", "KSA", "URU", "Miami Gardens — Hard Rock Stadium"],
+  [16, "2026-06-15", "21:00", "G", "IRN", "NZL", "Inglewood — SoFi Stadium"],
+  [17, "2026-06-16", "15:00", "I", "FRA", "SEN", "East Rutherford — MetLife Stadium"],
+  [18, "2026-06-16", "18:00", "I", "IRQ", "NOR", "Foxborough — Gillette Stadium"],
+  [19, "2026-06-16", "21:00", "J", "ARG", "ALG", "Kansas City — Arrowhead Stadium"],
+  [20, "2026-06-17", "00:00", "J", "AUT", "JOR", "Santa Clara — Levi's Stadium"],
+  [21, "2026-06-17", "13:00", "K", "POR", "COD", "Houston — NRG Stadium"],
+  [22, "2026-06-17", "16:00", "L", "ENG", "CRO", "Arlington — AT&T Stadium"],
+  [23, "2026-06-17", "19:00", "L", "GHA", "PAN", "Toronto — BMO Field"],
+  [24, "2026-06-17", "22:00", "K", "UZB", "COL", "Cidade do México — Estadio Azteca"],
+  [25, "2026-06-18", "12:00", "A", "CZE", "RSA", "Atlanta — Mercedes-Benz Stadium"],
+  [26, "2026-06-18", "15:00", "B", "SUI", "BIH", "Inglewood — SoFi Stadium"],
+  [27, "2026-06-18", "18:00", "B", "CAN", "QAT", "Vancouver — BC Place"],
+  [28, "2026-06-18", "21:00", "A", "MEX", "KOR", "Zapopan — Estadio Akron"],
+  [29, "2026-06-19", "15:00", "D", "USA", "AUS", "Seattle — Lumen Field"],
+  [30, "2026-06-19", "18:00", "C", "SCO", "MAR", "Foxborough — Gillette Stadium"],
+  [31, "2026-06-19", "20:30", "C", "BRA", "HAI", "Philadelphia — Lincoln Financial Field"],
+  [32, "2026-06-19", "23:00", "D", "TUR", "PAR", "Santa Clara — Levi's Stadium"],
+  [33, "2026-06-20", "13:00", "F", "NED", "SWE", "Houston — NRG Stadium"],
+  [34, "2026-06-20", "16:00", "E", "GER", "CIV", "Toronto — BMO Field"],
+  [35, "2026-06-20", "20:00", "E", "ECU", "CUR", "Kansas City — Arrowhead Stadium"],
+  [36, "2026-06-21", "00:00", "F", "TUN", "JPN", "Monterrey — Estadio BBVA"],
+  [37, "2026-06-21", "12:00", "H", "ESP", "KSA", "Atlanta — Mercedes-Benz Stadium"],
+  [38, "2026-06-21", "15:00", "G", "BEL", "IRN", "Inglewood — SoFi Stadium"],
+  [39, "2026-06-21", "18:00", "H", "URU", "CPV", "Miami Gardens — Hard Rock Stadium"],
+  [40, "2026-06-21", "21:00", "G", "NZL", "EGY", "Vancouver — BC Place"],
+  [41, "2026-06-22", "13:00", "J", "ARG", "AUT", "Arlington — AT&T Stadium"],
+  [42, "2026-06-22", "17:00", "I", "FRA", "IRQ", "Philadelphia — Lincoln Financial Field"],
+  [43, "2026-06-22", "20:00", "I", "NOR", "SEN", "East Rutherford — MetLife Stadium"],
+  [44, "2026-06-22", "23:00", "J", "JOR", "ALG", "Santa Clara — Levi's Stadium"],
+  [45, "2026-06-23", "13:00", "K", "POR", "UZB", "Houston — NRG Stadium"],
+  [46, "2026-06-23", "16:00", "L", "ENG", "GHA", "Foxborough — Gillette Stadium"],
+  [47, "2026-06-23", "19:00", "L", "PAN", "CRO", "Toronto — BMO Field"],
+  [48, "2026-06-23", "22:00", "K", "COL", "COD", "Zapopan — Estadio Akron"],
+  [49, "2026-06-24", "15:00", "B", "SUI", "CAN", "Vancouver — BC Place"],
+  [50, "2026-06-24", "15:00", "B", "BIH", "QAT", "Seattle — Lumen Field"],
+  [51, "2026-06-24", "18:00", "C", "SCO", "BRA", "Miami Gardens — Hard Rock Stadium"],
+  [52, "2026-06-24", "18:00", "C", "MAR", "HAI", "Atlanta — Mercedes-Benz Stadium"],
+  [53, "2026-06-24", "21:00", "A", "CZE", "MEX", "Cidade do México — Estadio Azteca"],
+  [54, "2026-06-24", "21:00", "A", "RSA", "KOR", "Monterrey — Estadio BBVA"],
+  [55, "2026-06-25", "16:00", "E", "CUR", "CIV", "Philadelphia — Lincoln Financial Field"],
+  [56, "2026-06-25", "16:00", "E", "ECU", "GER", "East Rutherford — MetLife Stadium"],
+  [57, "2026-06-25", "19:00", "F", "JPN", "SWE", "Arlington — AT&T Stadium"],
+  [58, "2026-06-25", "19:00", "F", "TUN", "NED", "Kansas City — Arrowhead Stadium"],
+  [59, "2026-06-25", "22:00", "D", "TUR", "USA", "Inglewood — SoFi Stadium"],
+  [60, "2026-06-25", "22:00", "D", "PAR", "AUS", "Santa Clara — Levi's Stadium"],
+  [61, "2026-06-26", "15:00", "I", "NOR", "FRA", "Foxborough — Gillette Stadium"],
+  [62, "2026-06-26", "15:00", "I", "SEN", "IRQ", "Toronto — BMO Field"],
+  [63, "2026-06-26", "20:00", "H", "CPV", "KSA", "Houston — NRG Stadium"],
+  [64, "2026-06-26", "20:00", "H", "URU", "ESP", "Zapopan — Estadio Akron"],
+  [65, "2026-06-26", "23:00", "G", "EGY", "IRN", "Seattle — Lumen Field"],
+  [66, "2026-06-26", "23:00", "G", "NZL", "BEL", "Vancouver — BC Place"],
+  [67, "2026-06-27", "17:00", "L", "PAN", "ENG", "East Rutherford — MetLife Stadium"],
+  [68, "2026-06-27", "17:00", "L", "CRO", "GHA", "Philadelphia — Lincoln Financial Field"],
+  [69, "2026-06-27", "19:30", "K", "COL", "POR", "Miami Gardens — Hard Rock Stadium"],
+  [70, "2026-06-27", "19:30", "K", "COD", "UZB", "Atlanta — Mercedes-Benz Stadium"],
+  [71, "2026-06-27", "22:00", "J", "ALG", "AUT", "Kansas City — Arrowhead Stadium"],
+  [72, "2026-06-27", "22:00", "J", "JOR", "ARG", "Arlington — AT&T Stadium"],
+];
+
+export const MATCHES: Match[] = RAW.map(([id, date, time, g, a, b, city]) => ({
+  id,
+  group: g,
+  round: ((id - 1) < 24 ? 1 : (id - 1) < 48 ? 2 : 3) as 1 | 2 | 3,
+  a,
+  b,
+  startsAt: dt(date, time),
+  city,
+}));
 
 export type Participant = {
   id: string;
@@ -164,24 +231,21 @@ export type Participant = {
   pos: number;
 };
 
+// Mock só para mostrar a lista de Inscritos na capa pré-Copa.
+// O ranking real vem do view `ranking` do Supabase.
 export const PARTICIPANTS: Participant[] = [
-  { id: "nilcynea", name: "Nilcynéa", initials: "NI", host: false, score: 0, pos: 1 },
-  { id: "yomar", name: "Yomar", initials: "Y", host: true, score: 0, pos: 1 },
-  { id: "marcelo", name: "Marcelo", initials: "M", score: 0, pos: 1 },
-  { id: "isabelle", name: "Belle", initials: "B", score: 0, pos: 1 },
-  { id: "ludmarci", name: "Ludmarci", initials: "L", score: 0, pos: 1 },
-  { id: "ludmila", name: "Ludmila", initials: "Mi", score: 0, pos: 1 },
-  { id: "ana-julia", name: "Ana Julia", initials: "AJ", score: 0, pos: 1 },
-  { id: "ana-luisa", name: "Ana Luisa", initials: "AL", score: 0, pos: 1 },
-  { id: "bento", name: "Bento", initials: "Bt", score: 0, pos: 1 },
-  { id: "bruno", name: "Bruno", initials: "Br", score: 0, pos: 1 },
-  { id: "danilo", name: "Danilo", initials: "Dn", score: 0, pos: 1 },
-  { id: "fernanda", name: "Fernanda", initials: "Fe", score: 0, pos: 1 },
-  { id: "filipe", name: "Filipe", initials: "Fi", score: 0, pos: 1 },
-  { id: "gustavo", name: "Gustavo", initials: "Gu", score: 0, pos: 1 },
-  { id: "joaquim", name: "Joaquim", initials: "Jo", score: 0, pos: 1 },
-  { id: "leonardo", name: "Leonardo", initials: "Le", score: 0, pos: 1 },
-  { id: "vicente", name: "Vicente", initials: "Vi", score: 0, pos: 1 },
+  { id: "yomar", name: "Yomar", initials: "YO", host: true, score: 0, pos: 1 },
+  { id: "marcelo", name: "Marcelo", initials: "MM", host: true, score: 0, pos: 2 },
+  { id: "bruno", name: "Bruno Cesar", initials: "BC", host: true, score: 0, pos: 3 },
+  { id: "nilcynea", name: "Nilcynéa", initials: "NI", score: 0, pos: 4 },
+  { id: "anajulia", name: "Ana Julia", initials: "AJ", score: 0, pos: 5 },
+  { id: "analuisa", name: "Ana Luisa", initials: "AL", score: 0, pos: 6 },
+  { id: "belle", name: "Belle", initials: "BE", score: 0, pos: 7 },
+  { id: "danilo", name: "Danilo", initials: "DA", score: 0, pos: 8 },
+  { id: "fernanda", name: "Fernanda", initials: "FE", score: 0, pos: 9 },
+  { id: "filipe", name: "Filipe", initials: "FI", score: 0, pos: 10 },
+  { id: "ludmarci", name: "Ludmarci", initials: "LU", score: 0, pos: 11 },
+  { id: "mila", name: "Mila", initials: "MI", score: 0, pos: 12 },
 ];
 
 export const PRIZES = { first: 10000, second: 5000 };
