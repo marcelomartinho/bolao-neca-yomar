@@ -113,7 +113,7 @@ export default function RegulamentoPage() {
       <PageFooter
         left="Pág. 5 de 6"
         center="edição encerrada · até a próxima copa"
-        right="impr. interna · neca & yomar"
+        right="impr. interna · yomar e família"
       />
     </main>
   );

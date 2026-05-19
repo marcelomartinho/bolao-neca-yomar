@@ -237,7 +237,6 @@ export const PARTICIPANTS: Participant[] = [
   { id: "yomar", name: "Yomar", initials: "YO", host: true, score: 0, pos: 1 },
   { id: "marcelo", name: "Marcelo", initials: "MM", host: true, score: 0, pos: 2 },
   { id: "bruno", name: "Bruno Cesar", initials: "BC", host: true, score: 0, pos: 3 },
-  { id: "nilcynea", name: "Nilcynéa", initials: "NI", score: 0, pos: 4 },
   { id: "anajulia", name: "Ana Julia", initials: "AJ", score: 0, pos: 5 },
   { id: "analuisa", name: "Ana Luisa", initials: "AL", score: 0, pos: 6 },
   { id: "belle", name: "Belle", initials: "BE", score: 0, pos: 7 },
