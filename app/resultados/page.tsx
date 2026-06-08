@@ -199,7 +199,7 @@ export default async function ResultadosPage() {
                         </span>
                       ))}
                   </div>
-                  <div className="flex flex-wrap gap-1.5 px-3.5 py-3">
+                  <div className="flex flex-wrap gap-2 px-3.5 py-3">
                     {players.map((pl) => {
                       const pick = inner?.get(pl.id) ?? null;
                       return (
@@ -225,8 +225,16 @@ export default async function ResultadosPage() {
       {/* ---------- Matriz geral ---------- */}
       {matrixMatches.length > 0 && (
         <section className="border-t border-line px-4 py-5 md:px-9">
-          <div className="font-cond mb-1 text-base font-bold uppercase tracking-[0.1em] text-ink2">
-            Tabela geral
+          <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
+            <div className="font-cond text-base font-bold uppercase tracking-[0.1em] text-ink2">
+              Tabela geral
+            </div>
+            <a
+              href="/resultados/csv"
+              className="font-cond inline-flex items-center gap-1.5 rounded-sm border-2 border-ink bg-transparent px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-ink"
+            >
+              ↓ Exportar CSV
+            </a>
           </div>
           <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.1em] text-ink2">
             verde acerto · vermelho erro · — sem palpite ou jogo em andamento
@@ -238,15 +246,26 @@ export default async function ResultadosPage() {
                   <th className="sticky left-0 z-10 border-b border-r border-line bg-white/90 px-2 py-1.5 text-left font-mono text-[10px] uppercase tracking-[0.1em] text-ink2">
                     Jogador
                   </th>
-                  {matrixMatches.map((m) => (
-                    <th
-                      key={m.id}
-                      className="border-b border-line px-1 py-1.5 font-mono text-[9px] text-ink2"
-                      title={`${TEAMS[m.team_a as keyof typeof TEAMS].name} x ${TEAMS[m.team_b as keyof typeof TEAMS].name}`}
-                    >
-                      {m.id}
-                    </th>
-                  ))}
+                  {matrixMatches.map((m) => {
+                    const tA = TEAMS[m.team_a as keyof typeof TEAMS];
+                    const tB = TEAMS[m.team_b as keyof typeof TEAMS];
+                    return (
+                      <th
+                        key={m.id}
+                        className="border-b border-line px-1 py-1.5 align-bottom"
+                        title={`Jogo ${m.id}: ${tA.name} x ${tB.name}`}
+                      >
+                        <span className="flex flex-col items-center gap-0.5">
+                          <span className="font-mono text-[8px] text-ink2">{m.id}</span>
+                          <Flag code={tA.code} name={tA.name} size="sm" />
+                          <span className="font-cond text-[9px] font-bold leading-none">{tA.code}</span>
+                          <span className="text-[7px] leading-none text-ink2">×</span>
+                          <Flag code={tB.code} name={tB.name} size="sm" />
+                          <span className="font-cond text-[9px] font-bold leading-none">{tB.code}</span>
+                        </span>
+                      </th>
+                    );
+                  })}
                 </tr>
               </thead>
               <tbody>
@@ -344,19 +363,35 @@ function PlayerPickChip({
   ai: boolean;
 }) {
   const c = pickColors(pick, result);
+  const decided = result !== null && pick !== null;
+  const hit = decided && result === pick;
+  const ring = ai ? "#0b2c5c" : hit ? "#0b6b3a" : decided ? "#a44" : undefined;
   return (
     <span
-      className="inline-flex items-center gap-1 border px-1.5 py-1"
+      className="inline-flex flex-col items-center gap-1 rounded-sm border px-1.5 py-1.5"
       style={{
         borderColor: ai ? "#0b2c5c" : "#e2e6ee",
         background: ai ? "rgba(11,44,92,0.06)" : "transparent",
         borderWidth: ai ? 1.5 : 1,
       }}
-      title={`${name ?? "?"}${pick ? ` · ${PICK_LABEL[pick]}` : ""}`}
+      title={`${name ?? "?"}${pick ? ` · palpite ${PICK_LABEL[pick]}` : " · sem palpite"}${
+        decided ? (hit ? " · acertou" : " · errou") : ""
+      }`}
     >
-      <Avatar name={name ?? "?"} initials={initials} emoji={emoji} size={18} ring={ai ? "#0b2c5c" : undefined} />
+      <span className="relative inline-flex">
+        <Avatar name={name ?? "?"} initials={initials} emoji={emoji} size={34} ring={ring} />
+        {decided && (
+          <span
+            className="absolute -bottom-1 -right-1 flex h-[15px] w-[15px] items-center justify-center rounded-full text-[9px] font-bold leading-none text-white"
+            style={{ background: hit ? "#0b6b3a" : "#a44", boxShadow: "0 0 0 1.5px #fff" }}
+            aria-hidden
+          >
+            {hit ? "✓" : "✗"}
+          </span>
+        )}
+      </span>
       <span
-        className="font-cond inline-flex h-[18px] w-[18px] items-center justify-center text-[12px] font-extrabold leading-none"
+        className="font-cond inline-flex h-[20px] min-w-[24px] items-center justify-center px-1 text-[13px] font-extrabold leading-none"
         style={{ border: `1.5px solid ${c.border}`, background: c.bg, color: c.fg }}
       >
         {pick ? PICK_LABEL[pick] : "–"}
