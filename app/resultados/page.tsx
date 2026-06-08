@@ -7,6 +7,7 @@ import { TriRule } from "@/components/boletim/TriRule";
 import { Avatar } from "@/components/Avatar";
 import { Flag } from "@/components/Flag";
 import { fetchRanking, fetchMatches, fetchAllPicks } from "@/lib/db";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { TEAMS } from "@/lib/static-data";
 import type { Pick } from "@/lib/supabase/types";
 import { isAgentY } from "@/lib/special-profiles";
@@ -34,9 +35,26 @@ export default async function ResultadosPage() {
     fetchAllPicks(),
   ]);
 
+  // Host (organização) audita tudo, inclusive antes do apito — a RLS 0012 já
+  // libera os palpites pra ele. Demais só veem jogos já apitados (anti-cola).
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  let isHost = false;
+  if (user) {
+    const { data: prof } = await supabase
+      .from("profiles")
+      .select("host")
+      .eq("id", user.id)
+      .maybeSingle();
+    isHost = prof?.host === true;
+  }
+
   const now = Date.now();
   const resolved = matches.filter((m) => m.result !== null).length;
   const started = matches.filter((m) => new Date(m.starts_at).getTime() <= now);
+  const visible = isHost ? matches : started;
 
   // Jogadores: Agente Y fixado no topo, humanos por pontos e depois nome.
   const agentRow = ranking.find((r) => isAgentY(r.id)) ?? null;
@@ -72,11 +90,13 @@ export default async function ResultadosPage() {
     : 0;
   const aheadOfHumans = humanScores.filter((s) => s < agentScore).length;
 
-  const feed = [...started].sort(
-    (a, b) =>
-      new Date(b.starts_at).getTime() - new Date(a.starts_at).getTime() || b.id - a.id,
-  );
-  const matrixMatches = [...started].sort((a, b) => a.id - b.id);
+  const feed = isHost
+    ? [...visible].sort((a, b) => a.id - b.id) // ordem da cartela pra auditar
+    : [...visible].sort(
+        (a, b) =>
+          new Date(b.starts_at).getTime() - new Date(a.starts_at).getTime() || b.id - a.id,
+      );
+  const matrixMatches = [...visible].sort((a, b) => a.id - b.id);
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
@@ -86,7 +106,13 @@ export default async function ResultadosPage() {
         <Stamp color="#0b6b3a" rot={-2}>{resolved} apitados</Stamp>
         <Stamp color="#c79410" rot={3}>{started.length} liberados</Stamp>
         <Stamp color="#0b2c5c" rot={-1}>{players.length} cartelas</Stamp>
+        {isHost && <Stamp color="#a44" rot={2}>Organização · vê tudo</Stamp>}
       </div>
+      {isHost && (
+        <p className="border-b border-line bg-[#a44]/[0.05] px-4 py-2 font-mono text-[10.5px] uppercase tracking-[0.08em] text-[#a44] md:px-9">
+          Modo organização — você vê os palpites de todos, inclusive de jogos ainda não apitados.
+        </p>
+      )}
 
       {/* ---------- IA × Humanos ---------- */}
       {agentY && (
@@ -162,11 +188,16 @@ export default async function ResultadosPage() {
                         <Flag code={tB.code} name={tB.name} size="sm" />
                       </span>
                     </div>
-                    {m.result === null && (
-                      <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink2">
-                        em andamento
-                      </span>
-                    )}
+                    {m.result === null &&
+                      (new Date(m.starts_at).getTime() <= now ? (
+                        <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink2">
+                          em andamento
+                        </span>
+                      ) : (
+                        <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink2">
+                          {fmtKickoff(m.starts_at)} · agendado
+                        </span>
+                      ))}
                   </div>
                   <div className="flex flex-wrap gap-1.5 px-3.5 py-3">
                     {players.map((pl) => {
@@ -344,6 +375,16 @@ function MatrixCell({ pick, result }: { pick: Pick | null; result: Pick | null }
       {pick ? PICK_LABEL[pick] : "–"}
     </span>
   );
+}
+
+function fmtKickoff(iso: string): string {
+  return new Date(iso).toLocaleString("pt-BR", {
+    timeZone: "America/Sao_Paulo",
+    day: "2-digit",
+    month: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 function CompareBox({ label, value, accent }: { label: string; value: string | number; accent: string }) {
