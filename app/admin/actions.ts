@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { logActivity } from "@/lib/activity";
+import { fetchOfficialResults, pairKey, type OfficialMatch } from "@/lib/openfootball";
 import type { Pick } from "@/lib/supabase/types";
 
 export type ActionResult = { ok: true } | { ok: false; error: string };
@@ -209,4 +210,120 @@ export async function clearAllResults(confirmation: string): Promise<ActionResul
   revalidatePath("/ranking");
   revalidatePath("/admin");
   return { ok: true };
+}
+
+/* ---------------- Importar resultados oficiais (openfootball) ---------------- */
+
+export type ImportScope =
+  | { mode: "all" }
+  | { mode: "round"; round: number }
+  | { mode: "match"; matchId: number };
+
+export type ImportRow = {
+  id: number;
+  label: string;
+  status: "filled" | "skipped" | "error";
+  detail: string;
+};
+
+export type ImportResult =
+  | { ok: false; error: string }
+  | { ok: true; filled: number; skipped: number; errors: number; rows: ImportRow[] };
+
+export async function importOfficialResults(scope: ImportScope): Promise<ImportResult> {
+  // valida escopo
+  if (scope.mode === "round" && ![1, 2, 3].includes(scope.round)) {
+    return { ok: false, error: "Rodada inválida" };
+  }
+  if (
+    scope.mode === "match" &&
+    (!Number.isInteger(scope.matchId) || scope.matchId < 1 || scope.matchId > 72)
+  ) {
+    return { ok: false, error: "Jogo inválido" };
+  }
+
+  const guard = await requireHost();
+  if (!guard.ok) return { ok: false, error: guard.error };
+
+  // nossos jogos no escopo
+  let query = guard.supabase.from("matches").select("id,round,team_a,team_b,result,score_a,score_b");
+  if (scope.mode === "round") query = query.eq("round", scope.round);
+  if (scope.mode === "match") query = query.eq("id", scope.matchId);
+  const { data: matches, error: mErr } = await query.order("id", { ascending: true });
+  if (mErr) return { ok: false, error: "Não foi possível ler os jogos" };
+
+  // resultados oficiais (erro de rede → não preenche nada)
+  let official: OfficialMatch[];
+  try {
+    official = await fetchOfficialResults();
+  } catch (e) {
+    return {
+      ok: false,
+      error: `Falha ao buscar resultados oficiais: ${e instanceof Error ? e.message : "erro de rede"}`,
+    };
+  }
+
+  const byPair = new Map<string, OfficialMatch>();
+  for (const o of official) byPair.set(pairKey(o.code1, o.code2), o);
+
+  const rows: ImportRow[] = [];
+  const updates: { id: number; score_a: number; score_b: number; result: Pick }[] = [];
+
+  for (const m of matches ?? []) {
+    const label = `J${m.id} ${m.team_a}×${m.team_b}`;
+    const o = byPair.get(pairKey(m.team_a, m.team_b));
+    if (!o) {
+      rows.push({ id: m.id, label, status: "skipped", detail: "sem resultado oficial ainda" });
+      continue;
+    }
+    let sa: number;
+    let sb: number;
+    if (m.team_a === o.code1 && m.team_b === o.code2) {
+      sa = o.scoreA;
+      sb = o.scoreB;
+    } else if (m.team_a === o.code2 && m.team_b === o.code1) {
+      sa = o.scoreB;
+      sb = o.scoreA;
+    } else {
+      rows.push({ id: m.id, label, status: "error", detail: "par de times não casou" });
+      continue;
+    }
+    updates.push({ id: m.id, score_a: sa, score_b: sb, result: resultFromScore(sa, sb) });
+    rows.push({ id: m.id, label, status: "filled", detail: `${sa}–${sb}` });
+  }
+
+  // aplica os placares (falha de gravação → marca erro, não fica pela metade silenciosa)
+  for (const u of updates) {
+    const { error } = await guard.supabase
+      .from("matches")
+      .update({ score_a: u.score_a, score_b: u.score_b, result: u.result })
+      .eq("id", u.id);
+    if (error) {
+      const row = rows.find((r) => r.id === u.id);
+      if (row) {
+        row.status = "error";
+        row.detail = "falha ao salvar";
+      }
+    }
+  }
+
+  const filled = rows.filter((r) => r.status === "filled").length;
+  const skipped = rows.filter((r) => r.status === "skipped").length;
+  const errors = rows.filter((r) => r.status === "error").length;
+
+  await logActivity(null, "match.import_official", {
+    mode: scope.mode,
+    filled,
+    skipped,
+    errors,
+  });
+
+  revalidatePath("/");
+  revalidatePath("/grupos");
+  revalidatePath("/tabela");
+  revalidatePath("/ranking");
+  revalidatePath("/resultados");
+  revalidatePath("/admin");
+
+  return { ok: true, filled, skipped, errors, rows };
 }

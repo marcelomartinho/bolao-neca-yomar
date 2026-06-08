@@ -13,7 +13,8 @@ export type ActivityAction =
   | "config.deadline"
   | "admin.clear_picks_user"
   | "admin.clear_all_picks"
-  | "admin.clear_all_results";
+  | "admin.clear_all_results"
+  | "match.import_official";
 
 type Payload = Record<string, unknown>;
 

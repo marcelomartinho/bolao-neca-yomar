@@ -8,6 +8,7 @@ import { PageFooter } from "@/components/boletim/PageFooter";
 import { AdminClient } from "./AdminClient";
 import { DeadlineEditor } from "./DeadlineEditor";
 import { AdminReset } from "./AdminReset";
+import { ImportResults } from "./ImportResults";
 
 export const dynamic = "force-dynamic";
 
@@ -83,6 +84,14 @@ export default async function AdminPage() {
       <div className="border-b border-line px-4 py-5 md:px-9">
         <DeadlineEditor initialDeadline={config.picks_deadline} />
       </div>
+      <ImportResults
+        matches={matches.map((m) => ({
+          id: m.id,
+          team_a: m.team_a,
+          team_b: m.team_b,
+          round: m.round,
+        }))}
+      />
       <AdminClient matches={matches} orgName={profile.name} />
       <AdminReset profiles={profilesForReset} />
       <PageFooter
