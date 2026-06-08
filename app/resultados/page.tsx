@@ -230,10 +230,10 @@ export default async function ResultadosPage() {
               Tabela geral
             </div>
             <a
-              href="/resultados/csv"
+              href="/resultados/xlsx"
               className="font-cond inline-flex items-center gap-1.5 rounded-sm border-2 border-ink bg-transparent px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-ink"
             >
-              ↓ Exportar CSV
+              ↓ Exportar Excel
             </a>
           </div>
           <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.1em] text-ink2">
