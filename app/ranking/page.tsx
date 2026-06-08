@@ -256,7 +256,12 @@ function YomarLeaderCard({
           {name}
         </div>
         <div className="mt-2">
-          <Stamp color="#c79410" rot={-3}>Liderança da casa · até a bola rolar</Stamp>
+          <span
+            className="font-cond inline-flex items-center gap-1.5 rounded-md border-2 px-2.5 py-1 text-[12.5px] font-bold uppercase tracking-wider"
+            style={{ borderColor: "#ffffff", background: "#ffffff", color: "#0b2c5c", transform: "rotate(-3deg)" }}
+          >
+            Liderança da casa · até a bola rolar
+          </span>
         </div>
       </div>
     </div>
