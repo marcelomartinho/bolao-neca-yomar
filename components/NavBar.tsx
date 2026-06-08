@@ -34,6 +34,12 @@ function buildMobile(isAdmin: boolean): Item[] {
       match: (p) => p === "/ranking",
     },
     {
+      href: "/resultados" as Route,
+      label: "Resultados",
+      icon: <ResultadosGlyph />,
+      match: (p) => p.startsWith("/resultados"),
+    },
+    {
       href: "/m/familia" as Route,
       label: "Família",
       icon: <PerfilGlyph />,
@@ -57,6 +63,7 @@ function buildDesktop(isAdmin: boolean) {
     { href: "/grupos" as Route, label: "Grupos" },
     { href: "/tabela" as Route, label: "Tabela" },
     { href: "/ranking" as Route, label: "Ranking" },
+    { href: "/resultados" as Route, label: "Resultados" },
     { href: "/regulamento" as Route, label: "Regulamento" },
     { href: "/m/familia" as Route, label: "Família" },
   ];
@@ -207,6 +214,16 @@ function PerfilGlyph() {
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
       <circle cx="12" cy="8" r="4" />
       <path d="M4 21c0-4 4-7 8-7s8 3 8 7" />
+    </svg>
+  );
+}
+
+function ResultadosGlyph() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden>
+      <rect x="4" y="3" width="16" height="18" rx="1" />
+      <path d="M8 8h8M8 12h8M8 16h5" strokeLinecap="round" />
+      <path d="M15.5 16.5l1.5 1.5 2.5-2.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }

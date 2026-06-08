@@ -20,6 +20,12 @@ export type PickRow = {
   updated_at: string;
 };
 
+export type AllPickRow = {
+  user_id: string;
+  match_id: number;
+  pick: Pick;
+};
+
 export type RankingRow = {
   id: string;
   name: string | null;
@@ -105,4 +111,19 @@ export async function fetchPicksOfUser(userId: string) {
     .order("match_id", { ascending: true });
   if (error) throw new Error(`fetchPicksOfUser: ${error.message}`);
   return (data ?? []) as PickRow[];
+}
+
+/**
+ * Palpites de TODOS os jogadores. O RLS de `picks` ("dono OU jogo já
+ * começou") filtra sozinho: visitante anônimo só recebe palpites de jogos
+ * já iniciados — anti-cola automático, válido inclusive para o Agente Y.
+ */
+export async function fetchAllPicks() {
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase
+    .from("picks")
+    .select("user_id,match_id,pick")
+    .order("match_id", { ascending: true });
+  if (error) throw new Error(`fetchAllPicks: ${error.message}`);
+  return (data ?? []) as AllPickRow[];
 }

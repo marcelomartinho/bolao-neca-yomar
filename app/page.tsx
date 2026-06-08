@@ -8,6 +8,7 @@ import { DeadlineBanner } from "@/components/DeadlineBanner";
 import { PageFooter } from "@/components/boletim/PageFooter";
 import { fetchAppConfig } from "@/lib/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { isAgentY } from "@/lib/special-profiles";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,9 @@ export default async function FrontPage() {
     host: boolean;
     is_kid: boolean;
   };
-  const roster: Roster[] = (profilesData ?? []).map((p) => ({
+  const roster: Roster[] = (profilesData ?? [])
+    .filter((p) => !isAgentY(p.id)) // Agente Y é benchmark de IA, não entra no roster humano
+    .map((p) => ({
     id: p.id,
     name: p.name,
     initials: p.initials,

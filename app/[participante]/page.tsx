@@ -7,6 +7,7 @@ import { Avatar } from "@/components/Avatar";
 import { Flag } from "@/components/Flag";
 import { fetchProfile, fetchPicksOfUser, fetchMatches } from "@/lib/db";
 import { TEAMS } from "@/lib/static-data";
+import { isAgentY } from "@/lib/special-profiles";
 
 export const revalidate = 60;
 
@@ -65,7 +66,11 @@ export default async function PerfilPage({ params }: Props) {
                 {profile.name}
               </h1>
               <div className="tag mt-1">
-                {profile.host ? "Organização" : "Participante"}
+                {isAgentY(profile.id)
+                  ? "Agente de IA · fora do prêmio"
+                  : profile.host
+                    ? "Organização"
+                    : "Participante"}
               </div>
             </div>
           </div>

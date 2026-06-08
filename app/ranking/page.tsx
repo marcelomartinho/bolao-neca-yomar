@@ -5,8 +5,8 @@ import { Stamp } from "@/components/boletim/Stamp";
 import { PageHeader } from "@/components/boletim/PageHeader";
 import { PageFooter } from "@/components/boletim/PageFooter";
 import { Avatar } from "@/components/Avatar";
-import { Icon } from "@/components/Icon";
 import { fetchRanking, fetchMatches } from "@/lib/db";
+import { isAgentY, isYomar } from "@/lib/special-profiles";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -16,13 +16,35 @@ export default async function RankingPage() {
   const [ranking, matches] = await Promise.all([fetchRanking(), fetchMatches()]);
   const resolved = matches.filter((m) => m.result !== null).length;
   const remaining = matches.length - resolved;
+  const noResults = resolved === 0;
 
-  const sorted = ranking
-    .map((r, i) => ({ ...r, pos: i + 1 }))
-    .filter((r) => r.id !== null);
+  // Agente Y (IA) fica FORA da numeração e do prêmio — é só referência.
+  const agentY = ranking.find((r) => isAgentY(r.id)) ?? null;
+  let humans = ranking.filter((r) => r.id !== null && !isAgentY(r.id));
 
+  // Enquanto nenhum jogo tiver resultado, o Yomar lidera (cortesia da casa).
+  if (noResults) {
+    const yIdx = humans.findIndex((r) => isYomar(r));
+    if (yIdx > 0) {
+      const [yomar] = humans.splice(yIdx, 1);
+      humans = [yomar, ...humans];
+    }
+  }
+
+  const sorted = humans.map((r, i) => ({ ...r, pos: i + 1 }));
   const top3 = sorted.slice(0, 3);
   const hasScores = sorted.some((p) => (p.score ?? 0) > 0);
+  const leader = sorted[0] ?? null;
+  const showYomarLead = noResults && leader != null && isYomar(leader);
+
+  // Comparação humanos × IA
+  const humanScores = sorted.map((p) => p.score ?? 0);
+  const agentScore = agentY?.score ?? 0;
+  const bestHuman = humanScores.length ? Math.max(...humanScores) : 0;
+  const avgHuman = humanScores.length
+    ? humanScores.reduce((a, b) => a + b, 0) / humanScores.length
+    : 0;
+  const agentRankIfCounted = 1 + humanScores.filter((s) => s > agentScore).length;
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
@@ -35,7 +57,12 @@ export default async function RankingPage() {
       </div>
 
       <h2 className="font-cond m-0 break-words px-4 pb-1.5 pt-3 text-2xl font-extrabold uppercase leading-[1.05] tracking-tight md:px-9 md:pt-4 md:text-[44px] md:leading-none">
-        {!hasScores ? (
+        {showYomarLead ? (
+          <>
+            {leader!.name}{" "}
+            <span className="italic font-normal text-ink2">na liderança — até o primeiro apito.</span>
+          </>
+        ) : !hasScores ? (
           <span className="text-ink2">Ranking ainda em branco.</span>
         ) : top3.length === 1 ? (
           <>
@@ -53,7 +80,9 @@ export default async function RankingPage() {
 
       <div className="grid flex-1 min-h-0 grid-cols-1 md:[grid-template-columns:1.05fr_1fr]">
         <div className="px-4 pb-5 pt-3 md:px-9 md:pb-7 md:pt-4">
-          {!hasScores ? (
+          {showYomarLead ? (
+            <YomarLeaderCard name={leader!.name} initials={leader!.initials} emoji={leader!.emoji} />
+          ) : !hasScores ? (
             <div className="border-2 border-dashed border-line bg-white/40 p-6 text-sm text-ink2">
               {resolved === 0
                 ? "Pódio aparece quando o primeiro jogo for resolvido pelo admin."
@@ -67,10 +96,7 @@ export default async function RankingPage() {
           ) : (
             <div className="mt-3 grid grid-cols-3 gap-3.5">
               {top3.map((p, i) => {
-                const bg =
-                  i === 0
-                    ? "#0b6b3a"
-                    : "rgba(255,255,255,0.6)";
+                const bg = i === 0 ? "#0b6b3a" : "rgba(255,255,255,0.6)";
                 const fg = i === 0 ? "#fff" : "#0b2c5c";
                 return (
                   <div
@@ -92,12 +118,7 @@ export default async function RankingPage() {
                     <div className="font-cond text-3xl font-extrabold leading-none tracking-tight text-gold md:text-[46px]">
                       {p.pos}º
                     </div>
-                    <Avatar
-                      name={p.name ?? "?"}
-                      initials={p.initials}
-                      emoji={p.emoji}
-                      size={32}
-                    />
+                    <Avatar name={p.name ?? "?"} initials={p.initials} emoji={p.emoji} size={32} />
                     <div
                       className="font-cond max-w-full truncate text-center text-[11px] font-bold uppercase md:text-lg"
                       title={p.name ?? ""}
@@ -121,9 +142,19 @@ export default async function RankingPage() {
               Nota da redação
             </div>
             <p className="m-0 text-[13px] italic leading-snug">
-              Ranking atualizado a cada palpite registrado. Empate no total de pontos significa
-              prêmio rateado — veja{" "}
-              <Link href="/regulamento" className="underline">regulamento
+              {showYomarLead ? (
+                <>
+                  Cortesia da casa: o Yomar abre na ponta enquanto a bola não rola. Assim que o primeiro
+                  jogo for apitado, o ranking passa a valer por pontos.{" "}
+                </>
+              ) : (
+                <>
+                  Ranking atualizado a cada palpite registrado. Empate no total de pontos significa
+                  prêmio rateado — veja{" "}
+                </>
+              )}
+              <Link href="/regulamento" className="underline">
+                regulamento
               </Link>
               .
             </p>
@@ -131,6 +162,19 @@ export default async function RankingPage() {
         </div>
 
         <div className="border-t border-line py-4 md:border-l md:border-t-0">
+          {agentY && (
+            <AgentBenchmark
+              name={agentY.name}
+              initials={agentY.initials}
+              emoji={agentY.emoji}
+              score={agentScore}
+              resolved={resolved}
+              bestHuman={bestHuman}
+              avgHuman={avgHuman}
+              rankIfCounted={agentRankIfCounted}
+            />
+          )}
+
           <div className="grid grid-cols-[32px_1fr_56px_56px] border-b border-line px-4 pb-2 font-mono text-[10px] uppercase tracking-[0.14em] text-ink2 md:px-7">
             <span>#</span>
             <span>Participante</span>
@@ -154,32 +198,25 @@ export default async function RankingPage() {
                 >
                   {p.pos}º
                 </span>
-                <Link
-                  href={`/${p.id}`}
-                  className="flex items-center gap-2.5 hover:underline"
-                >
-                  <Avatar
-                    name={p.name ?? "?"}
-                    initials={p.initials}
-                    emoji={p.emoji}
-                    size={26}
-                  />
-                  <span
-                    className="text-[13.5px]"
-                    style={{ fontWeight: p.pos === 1 ? 700 : 500 }}
-                  >
+                <Link href={`/${p.id}`} className="flex items-center gap-2.5 hover:underline">
+                  <Avatar name={p.name ?? "?"} initials={p.initials} emoji={p.emoji} size={26} />
+                  <span className="text-[13.5px]" style={{ fontWeight: p.pos === 1 ? 700 : 500 }}>
                     {p.name}
                   </span>
                 </Link>
                 <span className="text-right font-mono text-xs text-ink2">
                   {resolved > 0 ? `${p.score ?? 0}/${resolved}` : "—"}
                 </span>
-                <span className="text-right font-cond text-[17px] font-bold">
-                  {p.score ?? 0}
-                </span>
+                <span className="text-right font-cond text-[17px] font-bold">{p.score ?? 0}</span>
               </div>
             ))
           )}
+
+          <div className="px-4 pt-3 md:px-7">
+            <Link href="/resultados" className="font-mono text-[11px] uppercase tracking-[0.14em] text-grass underline">
+              Ver todos os palpites e resultados →
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -189,6 +226,91 @@ export default async function RankingPage() {
         right="boletim · ed. 11"
       />
     </main>
+  );
+}
+
+function YomarLeaderCard({
+  name,
+  initials,
+  emoji,
+}: {
+  name: string | null;
+  initials: string | null;
+  emoji: string | null;
+}) {
+  return (
+    <div
+      className="relative flex items-center gap-4 overflow-hidden border-2 px-5 py-5"
+      style={{ borderColor: "#0b2c5c", background: "#0b6b3a", color: "#fff" }}
+    >
+      <TriRule
+        height={3}
+        style={{ position: "absolute", top: -2, left: -2, right: -2, width: "auto" }}
+      />
+      <div className="font-cond text-5xl font-extrabold leading-none tracking-tight text-gold md:text-[64px]">
+        1º
+      </div>
+      <Avatar name={name ?? "?"} initials={initials} emoji={emoji} size={56} ring="#fff" />
+      <div className="min-w-0">
+        <div className="font-cond truncate text-2xl font-extrabold uppercase leading-none md:text-[34px]" title={name ?? ""}>
+          {name}
+        </div>
+        <div className="mt-2">
+          <Stamp color="#c79410" rot={-3}>Liderança da casa · até a bola rolar</Stamp>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function AgentBenchmark({
+  name,
+  initials,
+  emoji,
+  score,
+  resolved,
+  bestHuman,
+  avgHuman,
+  rankIfCounted,
+}: {
+  name: string | null;
+  initials: string | null;
+  emoji: string | null;
+  score: number;
+  resolved: number;
+  bestHuman: number;
+  avgHuman: number;
+  rankIfCounted: number;
+}) {
+  return (
+    <div className="mx-4 mb-4 border-2 border-ink bg-[#0b2c5c]/[0.06] px-3.5 py-3 md:mx-7">
+      <div className="flex items-center gap-3">
+        <Avatar name={name ?? "Agente Y"} initials={initials} emoji={emoji} size={34} ring="#0b2c5c" />
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="font-cond text-[15px] font-extrabold uppercase tracking-tight">{name}</span>
+            <Stamp color="#0b2c5c" rot={-2}>IA · fora do prêmio</Stamp>
+          </div>
+          <div className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink2">
+            Referência da máquina · não disputa o prêmio
+          </div>
+        </div>
+        <div className="text-right">
+          <div className="font-cond text-2xl font-extrabold leading-none">{score}</div>
+          <div className="font-mono text-[9px] uppercase tracking-[0.08em] text-ink2">pts</div>
+        </div>
+      </div>
+      <div className="mt-2.5 border-t border-dashed border-line pt-2 font-mono text-[10.5px] leading-snug text-ink2">
+        {resolved === 0 ? (
+          <>Aguardando o primeiro apito para comparar com os humanos.</>
+        ) : (
+          <>
+            Acertos {score}/{resolved} · melhor humano {bestHuman} · média humana {avgHuman.toFixed(1)} ·
+            se contasse, estaria em <span className="font-bold text-ink">{rankIfCounted}º</span>.
+          </>
+        )}
+      </div>
+    </div>
   );
 }
 
