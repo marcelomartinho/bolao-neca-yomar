@@ -260,7 +260,7 @@ export function PalpiteClient({
         </div>
       )}
 
-      <div className="relative flex-1 overflow-auto px-4 py-3.5">
+      <div className="relative flex-1 overflow-auto px-4 pb-28 pt-3.5 md:pb-3.5">
         {switching && (
           <div className="pointer-events-none absolute inset-0 z-10 flex items-start justify-center bg-paper/70 pt-12 backdrop-blur-[1px]">
             <div className="border-grass flex items-center gap-3 border-2 bg-paper px-4 py-2.5 shadow-lg">
@@ -424,7 +424,7 @@ export function PalpiteClient({
         })()}
       </div>
 
-      <div className="flex items-center gap-2.5 border-t-2 border-ink bg-white/60 px-5 py-3">
+      <div className="mb-16 flex items-center gap-2.5 border-t-2 border-ink bg-white/60 px-5 py-3 md:mb-0">
         <div className="flex-1">
           <div className="tag">Auto-salva a cada palpite</div>
           <div className="font-cond text-base font-bold text-ink">
