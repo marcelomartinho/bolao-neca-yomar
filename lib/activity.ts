@@ -14,7 +14,8 @@ export type ActivityAction =
   | "admin.clear_picks_user"
   | "admin.clear_all_picks"
   | "admin.clear_all_results"
-  | "match.import_official";
+  | "match.import_official"
+  | "auth.magiclink_send";
 
 type Payload = Record<string, unknown>;
 

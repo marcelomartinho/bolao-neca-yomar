@@ -18,6 +18,8 @@ export type Mail = {
   fromEmail: string;
   fromName: string;
   to: string;
+  /** Extra recipients copied on the message (also added as RCPT). */
+  cc?: string[];
   subject: string;
   html: string;
 };
@@ -92,12 +94,17 @@ export async function sendMailViaSmtp(cfg: SmtpConfig, mail: Mail): Promise<void
     expect(await readReply(secure), "250", "MAIL FROM");
     secure.write(`RCPT TO:<${mail.to}>\r\n`);
     expect(await readReply(secure), "250", "RCPT TO");
+    for (const cc of mail.cc ?? []) {
+      secure.write(`RCPT TO:<${cc}>\r\n`);
+      expect(await readReply(secure), "250", `RCPT TO (cc ${cc})`);
+    }
     secure.write("DATA\r\n");
     expect(await readReply(secure), "354", "DATA");
 
     const headers = [
       `From: ${encodeHeader(mail.fromName)} <${mail.fromEmail}>`,
       `To: <${mail.to}>`,
+      ...(mail.cc?.length ? [`Cc: ${mail.cc.map((c) => `<${c}>`).join(", ")}`] : []),
       `Subject: ${encodeHeader(mail.subject)}`,
       "MIME-Version: 1.0",
       'Content-Type: text/html; charset="utf-8"',
