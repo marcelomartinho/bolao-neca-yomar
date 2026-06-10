@@ -4,6 +4,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { fetchManagedProfiles } from "@/lib/active-profile";
 import { PageHeader } from "@/components/boletim/PageHeader";
 import { Avatar } from "@/components/Avatar";
+import { EmojiField } from "@/components/EmojiField";
 import { updateProfile } from "./actions";
 
 export const dynamic = "force-dynamic";
@@ -103,17 +104,10 @@ export default async function PerfilEditPage({ searchParams }: { searchParams: S
             />
           </label>
 
-          <label className="block">
+          <div className="block">
             <span className="tag">Emoji (opcional)</span>
-            <input
-              type="text"
-              name="emoji"
-              maxLength={4}
-              defaultValue={target.emoji ?? ""}
-              placeholder="👵 🦊 ⚽"
-              className="border-ink mt-1 w-32 border-2 bg-white/60 px-3 py-3 font-sans text-2xl outline-none focus:border-grass"
-            />
-          </label>
+            <EmojiField key={target.id} defaultValue={target.emoji} />
+          </div>
 
           <div className="flex gap-3">
             <button

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/boletim/PageHeader";
+import { EmojiField } from "@/components/EmojiField";
 import { addKid } from "../actions";
 
 type SearchParams = Promise<{ error?: string }>;
@@ -44,16 +45,10 @@ export default async function NovoFilhoPage({ searchParams }: { searchParams: Se
             />
           </label>
 
-          <label className="block">
+          <div className="block">
             <span className="tag">Emoji (opcional)</span>
-            <input
-              type="text"
-              name="emoji"
-              maxLength={4}
-              placeholder="🦊 ⚽ 🌟"
-              className="border-ink mt-1 w-32 border-2 bg-white/60 px-3 py-3 font-sans text-2xl outline-none focus:border-grass"
-            />
-          </label>
+            <EmojiField />
+          </div>
 
           <label className="block">
             <span className="tag">Data de nascimento (opcional)</span>

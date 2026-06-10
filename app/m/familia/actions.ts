@@ -4,13 +4,13 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { logActivity } from "@/lib/activity";
+import { sanitizeEmoji } from "@/lib/emoji";
 
 export async function addKid(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim().slice(0, 40);
   const initialsRaw = String(formData.get("initials") ?? "").trim().slice(0, 2);
   const initials = initialsRaw ? initialsRaw.toUpperCase() : name.slice(0, 1).toUpperCase();
-  const emojiRaw = String(formData.get("emoji") ?? "").trim();
-  const emoji = emojiRaw ? emojiRaw.slice(0, 4) : null;
+  const emoji = sanitizeEmoji(formData.get("emoji"));
   const birthdate = String(formData.get("birthdate") ?? "").trim() || null;
 
   if (!name) redirect("/m/familia/novo?error=nome-obrigatorio");

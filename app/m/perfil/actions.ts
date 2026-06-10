@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { logActivity } from "@/lib/activity";
+import { sanitizeEmoji } from "@/lib/emoji";
 
 const UUID_RE = /^[0-9a-f-]{36}$/i;
 
@@ -11,8 +12,7 @@ export async function updateProfile(formData: FormData) {
   const name = String(formData.get("name") ?? "").trim().slice(0, 40);
   const initialsRaw = String(formData.get("initials") ?? "").trim().slice(0, 2);
   const initials = initialsRaw ? initialsRaw.toUpperCase() : null;
-  const emojiRaw = String(formData.get("emoji") ?? "").trim();
-  const emoji = emojiRaw ? emojiRaw.slice(0, 4) : null;
+  const emoji = sanitizeEmoji(formData.get("emoji"));
   const profileIdRaw = String(formData.get("profile_id") ?? "").trim();
   const profileId = UUID_RE.test(profileIdRaw) ? profileIdRaw : null;
 
