@@ -61,7 +61,7 @@ export async function GET() {
       .from("matches")
       .select("id,team_a,team_b,starts_at,result,score_a,score_b")
       .order("id", { ascending: true }),
-    supabase.from("picks").select("user_id,match_id,pick"),
+    supabase.from("picks").select("user_id,match_id,pick").range(0, 99999),
   ]);
 
   const now = Date.now();

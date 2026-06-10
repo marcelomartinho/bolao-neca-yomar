@@ -123,7 +123,8 @@ export async function fetchAllPicks() {
   const { data, error } = await supabase
     .from("picks")
     .select("user_id,match_id,pick")
-    .order("match_id", { ascending: true });
+    .order("match_id", { ascending: true })
+    .range(0, 99999); // sobrepõe o teto default de 1000 do PostgREST (15 users x 72 = 1080+)
   if (error) throw new Error(`fetchAllPicks: ${error.message}`);
   return (data ?? []) as AllPickRow[];
 }

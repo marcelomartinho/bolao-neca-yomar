@@ -109,7 +109,7 @@ export function AdminClient({ matches, orgName }: Props) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto px-4 py-4 md:px-9">
+      <div className="flex-1 overflow-auto px-4 pb-28 pt-4 md:px-9 md:pb-4">
         <div className="hidden md:grid md:grid-cols-[56px_44px_1fr_140px_1fr_64px_140px] md:items-center md:border-b md:border-line md:px-3 md:py-2 md:font-mono md:text-[10px] md:uppercase md:tracking-[0.14em] md:text-ink2">
           <span>Jogo</span>
           <span>Grp</span>
