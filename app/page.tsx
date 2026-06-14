@@ -89,13 +89,13 @@ export default async function FrontPage() {
         <div className="flex flex-col border-b border-line px-4 py-5 md:border-b-0 md:border-r md:px-9 md:py-7">
           <div className="flex flex-wrap items-center gap-2 md:gap-3.5">
             <Stamp color="#0b6b3a" rot={-3}>Aberto</Stamp>
-            <Stamp color="#c79410" rot={2}>Premiação dobrou</Stamp>
+            <Stamp color="#c79410" rot={2}>Tem prêmio até pra lanterna</Stamp>
             <Stamp color="#0b2c5c" rot={-1}>Participação gratuita</Stamp>
           </div>
           <h2 className="font-cond mt-4 text-3xl font-extrabold uppercase leading-[0.95] tracking-tight md:mt-5 md:text-[56px] md:leading-[0.92]">
             A tradição volta{" "}
             <span className="italic font-normal text-grass">e desta vez</span>{" "}
-            vale <span className="italic text-gold">quinze mil</span>.
+            vale <span className="italic text-gold">dezesseis mil</span>.
           </h2>
           <p className="mt-4 max-w-[540px] text-sm leading-relaxed md:mt-5 md:text-[14.5px]">
             Foram quatro anos esperando. A Copa volta — agora em três países e com 48 seleções —
@@ -162,9 +162,17 @@ export default async function FrontPage() {
                 R$ 5.000
               </span>
             </div>
+            <div className="mt-1.5 flex items-baseline gap-2 border-t border-dashed border-line pt-1.5">
+              <span className="font-cond text-base font-bold text-ink2 md:text-[18px]">Últ.</span>
+              <span className="flex-1 text-[10px] uppercase tracking-[0.06em] text-ink2 md:text-xs">consolação</span>
+              <span className="font-cond text-lg font-bold tracking-tight text-gold md:text-[24px]">
+                R$ 1.000
+              </span>
+            </div>
             <p className="mt-3 text-[11.5px] italic leading-relaxed text-ink2">
-              Em caso de empate em pontos, o prêmio será rateado igualmente. Inscrição é gratuita
-              — a tradição é o que paga.
+              Em caso de empate em pontos, o prêmio será rateado igualmente. Até o último colocado
+              leva R$ 1.000 de consolação do Avôtrocinador. Inscrição é gratuita — a tradição é o
+              que paga.
             </p>
           </div>
 

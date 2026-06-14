@@ -55,3 +55,10 @@ docs/_qa_*.py
 /test-results/
 /blob-report/
 playwright/.cache/
+/.playwright-mcp/
+
+# claude code (worktrees, local agent state — never commit)
+.claude/
+
+# local dev artifacts
+/dev.log

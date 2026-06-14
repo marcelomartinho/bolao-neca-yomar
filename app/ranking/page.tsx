@@ -37,6 +37,24 @@ export default async function RankingPage() {
   const leader = sorted[0] ?? null;
   const showYomarLead = noResults && leader != null && isYomar(leader);
 
+  // Consolação (lanterna): só quem palpitou (≥1) e não é o Yomar — ele banca o
+  // prêmio (Avôtrocinador) e fica fora da disputa. Agente Y já saiu de `humans`.
+  const elegiveisLanterna = sorted.filter(
+    (p) => !isYomar(p) && (p.total_picks ?? 0) > 0,
+  );
+  const lanternaScore = elegiveisLanterna.length
+    ? Math.min(...elegiveisLanterna.map((p) => p.score ?? 0))
+    : null;
+  const lanternaTop = elegiveisLanterna.length
+    ? Math.max(...elegiveisLanterna.map((p) => p.score ?? 0))
+    : 0;
+  const lanterna =
+    lanternaScore !== null
+      ? elegiveisLanterna.filter((p) => (p.score ?? 0) === lanternaScore)
+      : [];
+  // Só destaca quando há resultado e a lanterna não é também a liderança.
+  const showConsolacao = resolved > 0 && lanterna.length > 0 && lanternaScore !== lanternaTop;
+
   // Comparação humanos × IA
   const humanScores = sorted.map((p) => p.score ?? 0);
   const agentScore = agentY?.score ?? 0;
@@ -137,6 +155,10 @@ export default async function RankingPage() {
             </div>
           )}
 
+          {showConsolacao && (
+            <ConsolacaoCard players={lanterna} score={lanternaScore ?? 0} />
+          )}
+
           <div className="mt-6 border-[1.5px] border-ink bg-white/40 px-4 py-3.5">
             <div className="font-cond mb-1.5 text-[13px] font-bold uppercase tracking-[0.1em] text-ink2">
               Nota da redação
@@ -150,7 +172,7 @@ export default async function RankingPage() {
               ) : (
                 <>
                   Ranking atualizado a cada palpite registrado. Empate no total de pontos significa
-                  prêmio rateado — veja{" "}
+                  prêmio rateado — e o último colocado leva R$ 1.000 de consolação. Veja{" "}
                 </>
               )}
               <Link href="/regulamento" className="underline">
@@ -264,6 +286,44 @@ function YomarLeaderCard({
           </span>
         </div>
       </div>
+    </div>
+  );
+}
+
+function ConsolacaoCard({
+  players,
+  score,
+}: {
+  players: Array<{ id: string; name: string | null; initials: string | null; emoji: string | null }>;
+  score: number;
+}) {
+  const rateado = players.length > 1;
+  return (
+    <div className="relative mt-5 overflow-hidden border-2 border-ink bg-gold/[0.08] px-4 py-3.5">
+      <TriRule
+        height={3}
+        style={{ position: "absolute", top: -2, left: -2, right: -2, width: "auto" }}
+      />
+      <div className="flex items-baseline justify-between border-b border-dashed border-line pb-1.5">
+        <span className="font-cond text-[13px] font-bold uppercase tracking-[0.12em] text-gold">
+          Consolação · último colocado
+        </span>
+        <span className="font-cond text-lg font-extrabold text-gold">R$ 1.000</span>
+      </div>
+      <div className="mt-2.5 flex flex-col gap-2">
+        {players.map((p) => (
+          <div key={p.id} className="flex items-center gap-2.5">
+            <Avatar name={p.name ?? "?"} initials={p.initials} emoji={p.emoji} size={26} />
+            <span className="font-cond text-[14px] font-bold uppercase tracking-tight">{p.name}</span>
+            <span className="ml-auto font-mono text-[11px] text-ink2">{score} pts</span>
+          </div>
+        ))}
+      </div>
+      <p className="mt-2.5 border-t border-dashed border-line pt-2 font-mono text-[10px] leading-snug text-ink2">
+        {rateado
+          ? `Empate na lanterna — os R$ 1.000 do Avôtrocinador são rateados entre os ${players.length}.`
+          : "R$ 1.000 do Avôtrocinador para quem ficou na lanterna. Ninguém sai de mãos vazias."}
+      </p>
     </div>
   );
 }

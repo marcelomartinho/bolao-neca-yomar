@@ -23,11 +23,11 @@ const REGRAS: Array<[string, string]> = [
   ["Pontuação", "1 ponto por acerto de 1 / X / 2. Sem multiplicadores, sem zebras, sem complicação. Resultado considerado é o do tempo normal (90 min)."],
   [
     "Empate",
-    "Em caso de empate no total de acertos, o prêmio é rateado igualmente entre os empatados.",
+    "Em caso de empate no total de acertos, o prêmio é rateado igualmente entre os empatados — vale para o 1º, o 2º e a consolação do último colocado.",
   ],
   [
     "Premiação",
-    "1º lugar leva R$ 10.000,00. 2º lugar leva R$ 5.000,00.",
+    "1º lugar leva R$ 10.000,00. 2º lugar leva R$ 5.000,00. E o último colocado não sai de mãos vazias: leva R$ 1.000,00 de consolação, bancados pelo Avôtrocinador Yomar.",
   ],
   [
     "Cartela em branco",
@@ -86,9 +86,16 @@ export default function RegulamentoPage() {
               <span className="font-cond text-lg font-extrabold">1º</span>
               <span className="font-cond text-2xl font-extrabold text-grass">R$ 10.000</span>
             </div>
-            <div className="mt-1.5 flex items-baseline justify-between">
+            <div className="mt-1.5 flex items-baseline justify-between border-b border-dashed border-line pb-1.5">
               <span className="font-cond text-base font-extrabold text-ink2">2º</span>
               <span className="font-cond text-xl font-bold text-bluebr">R$ 5.000</span>
+            </div>
+            <div className="mt-1.5 flex items-baseline justify-between">
+              <span className="font-cond text-sm font-bold text-ink2">Último</span>
+              <span className="font-cond text-lg font-bold text-gold">R$ 1.000</span>
+            </div>
+            <div className="mt-1.5 font-mono text-[8.5px] uppercase leading-tight tracking-[0.1em] text-ink2">
+              Consolação do Avôtrocinador
             </div>
           </div>
 
