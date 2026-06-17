@@ -31,11 +31,23 @@ export default async function RankingPage() {
     }
   }
 
-  const sorted = humans.map((r, i) => ({ ...r, pos: i + 1 }));
-  const top3 = sorted.slice(0, 3);
-  const hasScores = sorted.some((p) => (p.score ?? 0) > 0);
+  const hasScores = humans.some((p) => (p.score ?? 0) > 0);
+  // Com pontos: posição compartilhada no empate (padrão esportivo 1-1-3).
+  // Sem jogo resolvido ainda: ordem da lista (cortesia da casa p/ Yomar).
+  const sorted = hasScores ? rankWithTies(humans) : humans.map((r, i) => ({ ...r, pos: i + 1 }));
   const leader = sorted[0] ?? null;
   const showYomarLead = noResults && leader != null && isYomar(leader);
+
+  // Pódio por LUGARES de premiação (1º e 2º). Empatados dividem o lugar.
+  // O lugar é por placar distinto — casa com as faixas de prêmio (1º/2º).
+  const distinctScores = [...new Set(sorted.map((p) => p.score ?? 0))];
+  const podiumPlaces = distinctScores.slice(0, 2).map((sc, i) => ({
+    place: i + 1,
+    score: sc,
+    members: sorted.filter((p) => (p.score ?? 0) === sc),
+  }));
+  const leaders = podiumPlaces[0]?.members ?? [];
+  const runnerUps = podiumPlaces[1]?.members ?? [];
 
   // Consolação (lanterna): só quem palpitou (≥1) e não é o Yomar — ele banca o
   // prêmio (Avôtrocinador) e fica fora da disputa. Agente Y já saiu de `humans`.
@@ -82,16 +94,24 @@ export default async function RankingPage() {
           </>
         ) : !hasScores ? (
           <span className="text-ink2">Ranking ainda em branco.</span>
-        ) : top3.length === 1 ? (
+        ) : leaders.length > 1 ? (
           <>
-            {top3[0].name}{" "}
+            {joinNames(leaders.map((p) => p.name))}{" "}
+            <span className="italic font-normal text-grass">dividem a ponta.</span>
+          </>
+        ) : runnerUps.length === 0 ? (
+          <>
+            {leaders[0]?.name}{" "}
             <span className="italic font-normal text-ink2">na liderança.</span>
           </>
         ) : (
           <>
-            {top3[0].name}{" "}
+            {leaders[0]?.name}{" "}
             <span className="italic font-normal">lidera —</span>{" "}
-            <span className="text-grass">{top3[1].name}</span> logo atrás.
+            <span className="text-grass">
+              {runnerUps.length > 1 ? "empate pelo 2º" : runnerUps[0]?.name}
+            </span>{" "}
+            logo atrás.
           </>
         )}
       </h2>
@@ -112,19 +132,26 @@ export default async function RankingPage() {
               .
             </div>
           ) : (
-            <div className="mt-3 grid grid-cols-3 gap-3.5">
-              {top3.map((p, i) => {
+            <div
+              className="mt-3 gap-3.5"
+              style={{
+                display: "grid",
+                gridTemplateColumns: `repeat(${podiumPlaces.length}, minmax(0, 1fr))`,
+              }}
+            >
+              {podiumPlaces.map((pl, i) => {
                 const bg = i === 0 ? "#0b6b3a" : "rgba(255,255,255,0.6)";
                 const fg = i === 0 ? "#fff" : "#0b2c5c";
+                const tied = pl.members.length > 1;
                 return (
                   <div
-                    key={p.id ?? i}
-                    className="relative flex flex-col items-center gap-1.5 overflow-hidden border-2 px-2 py-3 md:gap-2 md:px-3.5 md:py-4"
+                    key={pl.place}
+                    className="relative flex flex-col items-center gap-2 overflow-hidden border-2 px-2 py-3 md:px-3.5 md:py-4"
                     style={{
                       borderColor: "#0b2c5c",
                       background: bg,
                       color: fg,
-                      transform: `rotate(${(i - 1) * 0.6}deg)`,
+                      transform: `rotate(${(i === 0 ? -0.6 : 0.6)}deg)`,
                     }}
                   >
                     {i === 0 && (
@@ -134,20 +161,29 @@ export default async function RankingPage() {
                       />
                     )}
                     <div className="font-cond text-3xl font-extrabold leading-none tracking-tight text-gold md:text-[46px]">
-                      {p.pos}º
+                      {pl.place}º
                     </div>
-                    <Avatar name={p.name ?? "?"} initials={p.initials} emoji={p.emoji} size={32} />
-                    <div
-                      className="font-cond max-w-full truncate text-center text-[11px] font-bold uppercase md:text-lg"
-                      title={p.name ?? ""}
-                    >
-                      {p.name}
+                    <div className="flex flex-wrap items-start justify-center gap-x-3 gap-y-2">
+                      {pl.members.map((m) => (
+                        <Link
+                          key={m.id}
+                          href={`/${m.id}`}
+                          className="flex max-w-[88px] flex-col items-center gap-1 hover:underline"
+                          style={{ color: fg }}
+                          title={m.name ?? ""}
+                        >
+                          <Avatar name={m.name ?? "?"} initials={m.initials} emoji={m.emoji} size={32} />
+                          <div className="font-cond w-full truncate text-center text-[11px] font-bold uppercase md:text-base">
+                            {m.name}
+                          </div>
+                        </Link>
+                      ))}
                     </div>
                     <div
-                      className="font-mono text-[10px] uppercase tracking-[0.06em] md:text-[11px]"
+                      className="font-mono text-center text-[10px] uppercase tracking-[0.06em] md:text-[11px]"
                       style={{ opacity: i === 0 ? 0.9 : 0.65 }}
                     >
-                      {p.score ?? 0} pts
+                      {pl.score} pts{tied ? ` · ${pl.members.length} empatados` : ""}
                     </div>
                   </div>
                 );
@@ -377,6 +413,28 @@ function AgentBenchmark({
       </div>
     </div>
   );
+}
+
+// Posição com empate compartilhado (padrão esportivo 1-1-3).
+// Pressupõe `rows` já ordenado por score desc.
+function rankWithTies<T extends { score: number | null }>(rows: T[]): Array<T & { pos: number }> {
+  let lastScore: number | null = null;
+  let lastPos = 0;
+  return rows.map((r, i) => {
+    const s = r.score ?? 0;
+    const pos = lastScore !== null && s === lastScore ? lastPos : i + 1;
+    lastScore = s;
+    lastPos = pos;
+    return { ...r, pos };
+  });
+}
+
+function joinNames(names: Array<string | null>): string {
+  const ns = names.map((n) => n ?? "?");
+  if (ns.length <= 1) return ns[0] ?? "";
+  if (ns.length === 2) return `${ns[0]} e ${ns[1]}`;
+  if (ns.length === 3) return `${ns[0]}, ${ns[1]} e ${ns[2]}`;
+  return `${ns[0]}, ${ns[1]} e +${ns.length - 2}`;
 }
 
 function formatToday(): string {
