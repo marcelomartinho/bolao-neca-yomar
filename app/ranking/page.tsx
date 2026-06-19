@@ -74,7 +74,8 @@ export default async function RankingPage() {
   const avgHuman = humanScores.length
     ? humanScores.reduce((a, b) => a + b, 0) / humanScores.length
     : 0;
-  const agentRankIfCounted = 1 + humanScores.filter((s) => s > agentScore).length;
+  // Posição densa: nº de placares humanos DISTINTOS acima do agente + 1.
+  const agentRankIfCounted = 1 + new Set(humanScores.filter((s) => s > agentScore)).size;
 
   return (
     <main className="paper-bg flex min-h-screen flex-col text-ink">
@@ -415,16 +416,16 @@ function AgentBenchmark({
   );
 }
 
-// Posição com empate compartilhado (padrão esportivo 1-1-3).
+// Posição densa: empatados dividem a mesma posição e a próxima NÃO pula
+// (1, 2, 2, 3, 3, 4...). Casa com o pódio, que agrupa por placar distinto.
 // Pressupõe `rows` já ordenado por score desc.
 function rankWithTies<T extends { score: number | null }>(rows: T[]): Array<T & { pos: number }> {
   let lastScore: number | null = null;
-  let lastPos = 0;
-  return rows.map((r, i) => {
+  let pos = 0;
+  return rows.map((r) => {
     const s = r.score ?? 0;
-    const pos = lastScore !== null && s === lastScore ? lastPos : i + 1;
+    if (lastScore === null || s !== lastScore) pos += 1;
     lastScore = s;
-    lastPos = pos;
     return { ...r, pos };
   });
 }

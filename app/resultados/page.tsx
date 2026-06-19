@@ -157,74 +157,9 @@ export default async function ResultadosPage() {
         </section>
       )}
 
-      {/* ---------- Feed por jogo ---------- */}
-      <section className="px-4 py-5 md:px-9">
-        <div className="font-cond mb-3 text-base font-bold uppercase tracking-[0.1em] text-ink2">
-          Jogo a jogo
-        </div>
-        {feed.length === 0 ? (
-          <div className="border-2 border-dashed border-line bg-white/40 p-6 text-sm text-ink2">
-            Os palpites de cada jogo aparecem aqui depois do apito inicial — antes disso ficam
-            fechados pra ninguém colar.
-          </div>
-        ) : (
-          <div className="flex flex-col gap-4">
-            {feed.map((m) => {
-              const tA = TEAMS[m.team_a as keyof typeof TEAMS];
-              const tB = TEAMS[m.team_b as keyof typeof TEAMS];
-              const inner = picksByMatch.get(m.id);
-              return (
-                <div key={m.id} className="border-[1.5px] border-ink bg-white/40">
-                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-3.5 py-2.5">
-                    <div className="flex items-center gap-2.5">
-                      <span className="font-mono text-[10px] text-ink2">Nº {String(m.id).padStart(2, "0")}</span>
-                      <span className="flex items-center gap-1.5 text-[13px]">
-                        <Flag code={tA.code} name={tA.name} size="sm" />
-                        <span style={{ fontWeight: m.result === "1" ? 700 : 500 }}>{tA.name}</span>
-                      </span>
-                      <MatchResult m={m} />
-                      <span className="flex items-center gap-1.5 text-[13px]">
-                        <span style={{ fontWeight: m.result === "2" ? 700 : 500 }}>{tB.name}</span>
-                        <Flag code={tB.code} name={tB.name} size="sm" />
-                      </span>
-                    </div>
-                    {m.result === null &&
-                      (new Date(m.starts_at).getTime() <= now ? (
-                        <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink2">
-                          em andamento
-                        </span>
-                      ) : (
-                        <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink2">
-                          {fmtKickoff(m.starts_at)} · agendado
-                        </span>
-                      ))}
-                  </div>
-                  <div className="flex flex-wrap gap-2 px-3.5 py-3">
-                    {players.map((pl) => {
-                      const pick = inner?.get(pl.id) ?? null;
-                      return (
-                        <PlayerPickChip
-                          key={pl.id}
-                          name={pl.name}
-                          initials={pl.initials}
-                          emoji={pl.emoji}
-                          pick={pick}
-                          result={m.result}
-                          ai={pl.isAi}
-                        />
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </section>
-
-      {/* ---------- Matriz geral ---------- */}
+      {/* ---------- Tabela geral (acima do jogo a jogo) ---------- */}
       {matrixMatches.length > 0 && (
-        <section className="border-t border-line px-4 py-5 md:px-9">
+        <section className="px-4 py-5 md:px-9">
           <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
             <div className="font-cond text-base font-bold uppercase tracking-[0.1em] text-ink2">
               Tabela geral
@@ -304,6 +239,71 @@ export default async function ResultadosPage() {
           </div>
         </section>
       )}
+
+      {/* ---------- Feed por jogo ---------- */}
+      <section className="border-t border-line px-4 py-5 md:px-9">
+        <div className="font-cond mb-3 text-base font-bold uppercase tracking-[0.1em] text-ink2">
+          Jogo a jogo
+        </div>
+        {feed.length === 0 ? (
+          <div className="border-2 border-dashed border-line bg-white/40 p-6 text-sm text-ink2">
+            Os palpites de cada jogo aparecem aqui depois do apito inicial — antes disso ficam
+            fechados pra ninguém colar.
+          </div>
+        ) : (
+          <div className="flex flex-col gap-4">
+            {feed.map((m) => {
+              const tA = TEAMS[m.team_a as keyof typeof TEAMS];
+              const tB = TEAMS[m.team_b as keyof typeof TEAMS];
+              const inner = picksByMatch.get(m.id);
+              return (
+                <div key={m.id} className="border-[1.5px] border-ink bg-white/40">
+                  <div className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-3.5 py-2.5">
+                    <div className="flex items-center gap-2.5">
+                      <span className="font-mono text-[10px] text-ink2">Nº {String(m.id).padStart(2, "0")}</span>
+                      <span className="flex items-center gap-1.5 text-[13px]">
+                        <Flag code={tA.code} name={tA.name} size="sm" />
+                        <span style={{ fontWeight: m.result === "1" ? 700 : 500 }}>{tA.name}</span>
+                      </span>
+                      <MatchResult m={m} />
+                      <span className="flex items-center gap-1.5 text-[13px]">
+                        <span style={{ fontWeight: m.result === "2" ? 700 : 500 }}>{tB.name}</span>
+                        <Flag code={tB.code} name={tB.name} size="sm" />
+                      </span>
+                    </div>
+                    {m.result === null &&
+                      (new Date(m.starts_at).getTime() <= now ? (
+                        <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink2">
+                          em andamento
+                        </span>
+                      ) : (
+                        <span className="font-mono text-[10px] uppercase tracking-[0.1em] text-ink2">
+                          {fmtKickoff(m.starts_at)} · agendado
+                        </span>
+                      ))}
+                  </div>
+                  <div className="flex flex-wrap gap-2 px-3.5 py-3">
+                    {players.map((pl) => {
+                      const pick = inner?.get(pl.id) ?? null;
+                      return (
+                        <PlayerPickChip
+                          key={pl.id}
+                          name={pl.name}
+                          initials={pl.initials}
+                          emoji={pl.emoji}
+                          pick={pick}
+                          result={m.result}
+                          ai={pl.isAi}
+                        />
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </section>
 
       <div className="px-4 pb-6 md:px-9">
         <Link
