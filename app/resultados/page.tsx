@@ -7,6 +7,7 @@ import { TriRule } from "@/components/boletim/TriRule";
 import { Avatar } from "@/components/Avatar";
 import { Flag } from "@/components/Flag";
 import { fetchRanking, fetchMatches, fetchAllPicks } from "@/lib/db";
+import { fetchAppConfig, isPicksOpen } from "@/lib/config";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { TEAMS } from "@/lib/static-data";
 import type { Pick } from "@/lib/supabase/types";
@@ -29,10 +30,11 @@ type Player = {
 };
 
 export default async function ResultadosPage() {
-  const [ranking, matches, allPicks] = await Promise.all([
+  const [ranking, matches, allPicks, cfg] = await Promise.all([
     fetchRanking(),
     fetchMatches(),
     fetchAllPicks(),
+    fetchAppConfig(),
   ]);
 
   // Host (organização) audita tudo, inclusive antes do apito — a RLS 0012 já
@@ -54,7 +56,10 @@ export default async function ResultadosPage() {
   const now = Date.now();
   const resolved = matches.filter((m) => m.result !== null).length;
   const started = matches.filter((m) => new Date(m.starts_at).getTime() <= now);
-  const visible = isHost ? matches : started;
+  // Anti-cola só até o deadline. Passou o prazo (ninguém altera palpite), todos
+  // veem os palpites de todos — inclusive de jogos ainda não apitados.
+  const picksClosed = !isPicksOpen(cfg);
+  const visible = isHost || picksClosed ? matches : started;
 
   // Jogadores: Agente Y fixado no topo, humanos por pontos e depois nome.
   const agentRow = ranking.find((r) => isAgentY(r.id)) ?? null;
@@ -111,6 +116,11 @@ export default async function ResultadosPage() {
       {isHost && (
         <p className="border-b border-line bg-[#a44]/[0.05] px-4 py-2 font-mono text-[10.5px] uppercase tracking-[0.08em] text-[#a44] md:px-9">
           Modo organização — você vê os palpites de todos, inclusive de jogos ainda não apitados.
+        </p>
+      )}
+      {!isHost && picksClosed && (
+        <p className="border-b border-line bg-grass/[0.06] px-4 py-2 font-mono text-[10.5px] uppercase tracking-[0.08em] text-grass md:px-9">
+          Prazo de palpites encerrado — agora todos veem os palpites de todos.
         </p>
       )}
 

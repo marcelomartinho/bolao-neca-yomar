@@ -51,7 +51,7 @@ export async function GET() {
     isHost = prof?.host === true;
   }
 
-  const [{ data: ranking }, { data: matches }, { data: picks }] = await Promise.all([
+  const [{ data: ranking }, { data: matches }, { data: picks }, { data: cfg }] = await Promise.all([
     supabase
       .from("ranking")
       .select("id,name,score")
@@ -62,12 +62,18 @@ export async function GET() {
       .select("id,team_a,team_b,starts_at,result,score_a,score_b")
       .order("id", { ascending: true }),
     supabase.from("picks").select("user_id,match_id,pick").range(0, 99999),
+    supabase.from("app_config").select("picks_deadline").eq("id", 1).maybeSingle(),
   ]);
 
   const now = Date.now();
   const allMatches = (matches ?? []) as MatchLite[];
+  // Passado o deadline (ninguém altera palpite), libera todos os jogos pra todos.
+  const picksClosed =
+    !!cfg?.picks_deadline && new Date(cfg.picks_deadline).getTime() <= now;
   const visible = (
-    isHost ? allMatches : allMatches.filter((m) => new Date(m.starts_at).getTime() <= now)
+    isHost || picksClosed
+      ? allMatches
+      : allMatches.filter((m) => new Date(m.starts_at).getTime() <= now)
   ).sort((a, b) => a.id - b.id);
 
   const picksByMatch = new Map<number, Map<string, string>>();
@@ -129,7 +135,7 @@ export async function GET() {
   ws.mergeCells(`A2:${lastColLetter}2`);
   const sub = ws.getCell("A2");
   const generated = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
-  sub.value = `Gerado em ${generated} · ${isHost ? "visão organização (todos os jogos)" : "visão pública (jogos já apitados)"}`;
+  sub.value = `Gerado em ${generated} · ${isHost ? "visão organização (todos os jogos)" : picksClosed ? "todos os jogos (prazo encerrado)" : "visão pública (jogos já apitados)"}`;
   sub.font = { name: "Arial", italic: true, size: 9, color: { argb: C.ink2 } };
   sub.fill = { type: "pattern", pattern: "solid", fgColor: { argb: C.paper2 } };
   ws.getRow(2).height = 15;
